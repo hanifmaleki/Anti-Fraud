@@ -24,3 +24,10 @@ Practice-based project from the financial field. The service receives a request 
 ## Stage 1
 ### Simple Transaction Status Query
 Learn and practice basic of Spring Web and REST controllers bz implementing a simple logic that specifz the validity of a transaction with simple conditions.
+
+
+
+
+
+## Implementation Details 
+Each stage is an independent standalone project
