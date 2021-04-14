@@ -1,0 +1,10 @@
+type: edu
+files:
+- name: test/AntifraudTest.java
+  visible: false
+- name: build.gradle
+  visible: true
+- name: resources/application.properties
+  visible: false
+- name: src/antifraud/AntifraudApplication.java
+  visible: true

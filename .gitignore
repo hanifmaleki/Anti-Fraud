@@ -1,3 +1,9 @@
+# Project exclude paths
+/.coursecreator/
+/.gradle/
+/Antifraud/stage1/build/
+/Antifraud/stage1/out/
+/Antifraud/stage1/out/production/classes/
 # Compiled class file
 *.class
 
