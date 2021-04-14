@@ -1,0 +1,10 @@
+type: hyperskill
+title: Antifraud
+language: English
+summary: |-
+  Practice-based project from the financial field. The service receives a request with data on clients, their purchases, etc. The service answers whether to let the transaction happen or not. There are 3 types of service answers:
+
+  ALLOWED,
+  PROHIBITED,
+  MANUAL_PROCESSING.
+programming_language: Java
