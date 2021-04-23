@@ -1,1 +1,12 @@
 type: edu
+files:
+- name: src/antifraud/AntifraudApplication.java
+  visible: true
+- name: src/antifraud/model/User.java
+  visible: false
+- name: build.gradle
+  visible: true
+- name: src/antifraud/model/Role.java
+  visible: true
+- name: src/antifraud/controller/UserController.java
+  visible: true
