@@ -10,3 +10,5 @@ files:
   visible: true
 - name: src/antifraud/controller/UserController.java
   visible: true
+- name: resources/user-schema.yaml
+  visible: true
