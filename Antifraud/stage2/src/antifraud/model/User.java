@@ -1,12 +1,17 @@
 package antifraud.model;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
-    private long id;
+    @EqualsAndHashCode.Exclude
     private String name;
+
     private String username;
-    private String password;
+
+    @EqualsAndHashCode.Exclude
     private Role role;
 }

@@ -6,9 +6,7 @@ files:
   visible: false
 - name: build.gradle
   visible: true
-- name: src/antifraud/model/Role.java
-  visible: true
-- name: src/antifraud/controller/UserController.java
-  visible: true
 - name: resources/user-schema.yaml
   visible: true
+- name: src/antifraud/model/Role.java
+  visible: false
