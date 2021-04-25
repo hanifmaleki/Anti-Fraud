@@ -1,0 +1,46 @@
+additionalProperties: true
+description: The User Schema.
+examples:
+  -   name: John Doe
+      role: user
+      username: johen_doe
+  -   name: Richard Roe
+      role: admin
+      username: richard2020
+properties:
+  name:
+    $id: '#/properties/name'
+    description: The surname and familaname of the user
+    examples:
+      - John Doe
+    required:
+      - true
+    title: Complete name
+    type: string
+  role:
+    $id: '#/properties/role'
+    description: The Role of the user
+    enum:
+      - user
+      - admin
+    examples:
+      - user
+    required:
+      - true
+    title: The role schema
+    type: string
+  username:
+    $id: '#/properties/username'
+    description: The Username
+    examples:
+      - johen_doe
+    required:
+      - true
+    title: The username
+    type: string
+required:
+  - name
+  - username
+  - role
+title: The User schema
+type: object
