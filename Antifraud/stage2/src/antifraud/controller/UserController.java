@@ -1,27 +1,34 @@
 package antifraud.controller;
 
 import antifraud.model.User;
+import antifraud.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/antifraud/user")
+@RequiredArgsConstructor
 public class UserController {
 
+    private final UserService userService;
+
     @GetMapping
-    public List<User> getAll(){
-        return null;
+    public ResponseEntity<Collection<User>> getAll(){
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PostMapping
-    public User addUser(User user){
-        return null;
+    public ResponseEntity<Object> addUser(User user){
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping
-    public User deleteUser(String username){
-        return null;
+    public ResponseEntity<Object> deleteUser(String username){
+        return ResponseEntity.ok().build();
     }
 
 }
