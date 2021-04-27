@@ -29,4 +29,5 @@
 hs_err_pid*
 /.idea/
 /stage-1/.gradle/
-/stage-1/build/
+/Antifraud/stage-1/build/
+/Antifraud/stage2/build/
