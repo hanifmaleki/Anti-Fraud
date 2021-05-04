@@ -85,9 +85,21 @@ public class AntifraudTest extends SpringTest {
         }
     }
 
+
+    @DynamicTest
+        // Delete non-existing user and except 404 NOT_FOUND
+    CheckResult testUser3() {
+        try {
+            test3MainScenario();
+            return CheckResult.correct();
+        } catch (UnexpectedResultException exception) {
+            return exception.getResult();
+        }
+    }
+
     private void test1MainScenario() {
         // Add User1 and expect 200
-        addUserAndExceptStatus(user1, OK);
+        addUserAndExceptStatus(user1, CREATED);
 
         // Get Users
         List<User> users = getUsersAndExpectSize(1);
@@ -97,7 +109,7 @@ public class AntifraudTest extends SpringTest {
         checkUserExistingList(users, user1);
 
         // Add User2 and expect 200
-        addUserAndExceptStatus(user2, OK);
+        addUserAndExceptStatus(user2, CREATED);
 
 
         // Get Users (User1, User2)
@@ -128,7 +140,7 @@ public class AntifraudTest extends SpringTest {
         // GET Empty List
         getUsersAndExpectSize(0);
 
-        addUserAndExceptStatus(user1, OK);
+        addUserAndExceptStatus(user1, CREATED);
         addUserAndExceptStatus(user1, CONFLICT);
 
     }
@@ -136,10 +148,10 @@ public class AntifraudTest extends SpringTest {
     private void test3MainScenario() {
 
         // Add Use1
-        addUserAndExceptStatus(user1, OK);
+        addUserAndExceptStatus(user1, CREATED);
 
         // Add User2
-        addUserAndExceptStatus(user2, OK);
+        addUserAndExceptStatus(user2, CREATED);
 
         // Delete Username3
         //Except Error_Code
