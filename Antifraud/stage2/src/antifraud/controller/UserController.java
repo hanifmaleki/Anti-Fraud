@@ -22,12 +22,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> addUser(User user){
+    public ResponseEntity<Object> addUser(@RequestBody User user){
+        userService.addUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<Object> deleteUser(String username){
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Object> deleteUser(@PathVariable String username){
+        userService.deleteUSer(username);
         return ResponseEntity.ok().build();
     }
 

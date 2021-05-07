@@ -10,3 +10,5 @@ files:
   visible: true
 - name: src/antifraud/model/Role.java
   visible: false
+- name: src/antifraud/exception/IncompletDataException.java
+  visible: true

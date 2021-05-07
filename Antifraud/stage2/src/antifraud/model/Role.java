@@ -1,5 +1,13 @@
 package antifraud.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum Role {
-    ADMIN, USER
+    @JsonProperty("admin")
+    ADMIN,
+    @JsonProperty("user")
+    USER
+
+
+
 }
