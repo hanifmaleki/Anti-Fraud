@@ -1,6 +1,8 @@
 import antifraud.AntifraudApplication;
 import antifraud.model.Role;
 import antifraud.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.hyperskill.hstest.dynamic.DynamicTest;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
@@ -25,7 +27,8 @@ public class AntifraudTest extends SpringTest {
     private final User userWithoutName;
     private final User userWithoutUsername;
 
-    private final Gson gson = new Gson();
+    //    private final Gson gson = new Gson();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public AntifraudTest() {
         super(AntifraudApplication.class);
@@ -125,7 +128,7 @@ public class AntifraudTest extends SpringTest {
         // Delete User2
         deleteExistingUser(user2.getUsername());
 
-        // Get Epty List
+        // Get Empty List
         getUsersAndExpectSize(0);
 
     }
@@ -142,6 +145,11 @@ public class AntifraudTest extends SpringTest {
 
         addUserAndExceptStatus(user1, CREATED);
         addUserAndExceptStatus(user1, CONFLICT);
+
+        deleteExistingUser(user1.getUsername());
+
+        // GET Empty List
+        getUsersAndExpectSize(0);
 
     }
 
@@ -203,7 +211,8 @@ public class AntifraudTest extends SpringTest {
     }
 
     private HttpResponse addUser(User user) {
-        String user1Json = gson.toJson(user1);
+//        String user1Json = gson.toJson(user1);
+        String user1Json = toJson(user);
         HttpRequest httpRequest = post(address, user1Json);
         return httpRequest.send();
     }
@@ -211,7 +220,7 @@ public class AntifraudTest extends SpringTest {
     private void addUserAndExceptStatus(User user, HttpStatus httpStatus) {
         // Add User
         HttpResponse response = this.addUser(user);
-        // Except code 422
+        // Except httpStatus
         int status = httpStatus.value();
         if (response.getStatusCode() != status) {
             String feedback = String.format("POST %s should respond with status code %d, responded: %d\n\n" +
@@ -239,11 +248,12 @@ public class AntifraudTest extends SpringTest {
             throw new UnexpectedResultException(result);
         }
 
-        List<User> users = Arrays.asList(gson.fromJson(response.getContent(), User[].class));
+//        List<User> users = Arrays.asList(gson.fromJson(response.getContent(), User[].class));
+        List<User> users = Arrays.asList(fromJson(response, User[].class));
 
         if (expectedSize != null) {
             int size = users.size();
-            if (size != 1) {
+            if (size != expectedSize) {
                 String feedback = String.format("Number of users should be 1. The received list size is %d", size);
                 CheckResult result = CheckResult.wrong(feedback);
                 throw new UnexpectedResultException(result);
@@ -262,6 +272,23 @@ public class AntifraudTest extends SpringTest {
 
         public CheckResult getResult() {
             return result;
+        }
+    }
+
+    public String toJson(Object onject) {
+        try {
+            return objectMapper.writeValueAsString(onject);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T> T fromJson(HttpResponse response, Class<T> clazz) {
+        try {
+            T object = objectMapper.readValue(response.getContent(), clazz);
+            return object;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
