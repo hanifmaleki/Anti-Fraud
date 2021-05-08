@@ -35,7 +35,7 @@
         </ul>
     </li>
     <li>An endpoint enables admin user(s) to see a list of all users <code>GET /antifraud/user</code>&nbsp;<strike>with the encrypted password</strike> returning HTTP status code <strong><code>200 OK</code></strong>.</li>
-    <li>An endpoint enables the admin user(s) to delete a user <code>DELETE /antifraud/user/{userId}</code> returning HTTP status code
+    <li>An endpoint enables the admin user(s) to delete a user <code>DELETE /antifraud/user/{username}</code> returning HTTP status code
         <ul>
             <li>HTTP&nbsp;<code><strong>404 Not Found</strong></code>&nbsp;if such a username has not been added before.</li>
             <li>HTTP <strong><code>200 OK</code></strong> if the operation has been completed succesfully.</li>
@@ -85,4 +85,5 @@
 <ol>
     <li>Find a way to make user type case insensitive</li>
     <li>Add search user</li>
+    <li>Replace Long with BigDecimal</li>
 </ol>
