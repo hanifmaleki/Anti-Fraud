@@ -12,3 +12,7 @@ files:
   visible: false
 - name: src/antifraud/exception/IncompletDataException.java
   visible: true
+- name: src/antifraud/controller/StolenCardController.java
+  visible: true
+- name: src/antifraud/model/Transaction.java
+  visible: true

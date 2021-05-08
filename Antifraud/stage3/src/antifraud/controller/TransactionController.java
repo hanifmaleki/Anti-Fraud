@@ -1,18 +1,18 @@
 package antifraud.controller;
 
 import antifraud.model.ResultEnum;
+import antifraud.model.Transaction;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/antifraud/transaction")
 public class TransactionController {
 
     @GetMapping
-    ResponseEntity<String> isTransactionValid(@RequestParam Long amount) {
+    ResponseEntity<String> isTransactionValid(@RequestBody Transaction transaction) {
+        int amount = transaction.getAmount();
+
         if (amount <= 200L) {
             return ResponseEntity.ok(ResultEnum.ALLOWED.name());
         }
