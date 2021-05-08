@@ -1,52 +1,108 @@
-<html>
+<h2>Description</h2>
 
-<h2>Task Description: Tips & Tricks</h2>
+<p>
+    Normally hackers use specific IP-addresses. As a result you should be cautious about activities on such a network
+    address.
+    In addition, some card numbers are reported as stolen.
+    The anti-fraud system should prohibit any transaction of the stolen cards.</p>
 
-<p>This is a task description file.
-Its content will be displayed to a learner
-in the <strong>Task Description</strong> window.</p>
+<p>
+    In this stage, the anti-fraud system would be enabled to get a list of prohibited card numbers as well as suspicious
+    IP address and banned them from doing transactions.
+</p>
 
-<p>It supports both Markdown and HTML.
-To toggle the format, you can rename <strong>task.md</strong>
-to <strong>task.html</strong>, or vice versa.
-The default task description format can be changed
-in <strong>Preferences | Tools | Education</strong>,
-but this will not affect any existing task description files.</p>
+<h2>Objectives</h2>
 
-<p>The following features are available in
-<strong>task.md/task.html</strong>
-which are specific to the EduTools plugin:</p>
+<p>Add the following rest-endpoints:</p>
 
 <ul>
-<li>Hints can be added anywhere in the task text.
-Type "hint" and press Tab.
-Hints should be added to an empty line in the task text.
-In hints you can use HTML only.
-<div class="hint">Text of your hint</div></li>
+    <li>suspicious IP address
+        <ul>
+            <li>get a list <code>GET /antifraud/ip</code></li>
+            <li>add an item to the list <code>POST /antifraud/ip</code></li>
+            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/ip/{id}</code></li>
+        </ul>
+    </li>
+    <li>
+        <p>Stolen cards</p>
 
-<li>You may need to refer your learners to a particular lesson,
-task, or file. To achieve this, you can use the in-course links.
-Specify the path using the <code>&lt;a href="course://lesson1/task1/file1"&gt;
-link_text&lt;/a&gt;</code> format.</li><br>
-
-<li>You can insert shortcuts in the task description.
-While <strong>task.html/task.md</strong> is open,
-right-click anywhere on the <strong>Editor</strong> tab
-and choose the <strong>Insert shortcut</strong> option
-from the context menu.
-For example: &amp;shortcut:FileStructurePopup;.</li><br>
-
-<li>Insert the &percnt;<code>IDE_NAME</code>&percnt; macro,
-which will be replaced by the actual IDE name.
-For example, <strong>%IDE_NAME%</strong>.</li><br>
-
-<li>Insert PSI elements, by using links like
-<code>&lt;a href="psi_element://link.to.element"&gt;element description&lt;/a&gt;</code>.
-To get such a link, right-click the class or method
-and select <strong>Copy Reference</strong>.
-Then press &amp;shortcut:EditorPaste;
-to insert the link where appropriate.
-For example, a
-<a href="psi_element://java.lang.String#contains">link to the "contains" method</a>.</li>
+        <ul>
+            <li>get a list <code>GET /antifraud/stoeln</code></li>
+            <li>add an item to the list <code>POST /antifraud/stolen</code></li>
+            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/stolen/{id}</code></li>
+        </ul>
+    </li>
+    <li>
+        <p>Improve the transaction check </p>
+        <ul>
+            <li>Enhance a transaction to be an object which send as <em>request-bod</em> with two fields
+                <em>ip-address</em>
+                and <em>card-number</em>
+                <pre><code class="language-json">
+                    {
+                        "amount": 159,
+                        "ip-adress": "127.0.0.1",
+                        "card-number": "1234-5678-9012-3456"
+                    }
+                </code></pre>
+            </li>
+            <li> Enrich the fraud detection method <code> GET {{antifraud-host}}/api/antifraud/ </code> to prohibit any
+                transaction of the stolen cards as well as suspicious IP addresses.
+                If the transaction is not from suspicious IP or stolen card.
+            </li>
+            <li>
+                Enrich the response body of the <code> GET {{antifraud-host}}/api/antifraud/ </code> with a property
+                <em>message</em> which is <em>empty</em> in case of <em>ALLOWED</em> transaction and for
+                <em>PROHIBITED</em>
+                and <em>MANUAL_PROCESSING</em> has the following value:
+                <ul>
+                    <li>In case of <em>MANUAL_PROCESSING</em> the message would be <code> The transactions with this
+                        price
+                        needs to be confirmed manually.</code></li>
+                    <li>In case of <em>PROHIBITED</em> because of the price of transaction the message should contain
+                        <em>
+                            A transaction is above allowed value.
+                        </em></li>
+                    <li>In cse of <em>PROHIBITED</em> because of the stolen card the message contains <code>The
+                        given card is in the blacklist</code></li>
+                    <li>In cse of <em>PROHIBITED</em> because of the prohibited IP address it the message contains
+                        <code>The given IP address is suspicious.</code></li>
+                    <li> If a transaction is <em>PROHIBITED</em> and more than one of the reason can be applied on it
+                        the message would contains all of the reasons.
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
 </ul>
-</html>
+
+<h2>Examples</h2>
+
+<ol>
+    <li>Add a prohibited IP</li>
+    <li>Add a stolen card</li>
+    <li>Ask for a valid trx</li>
+    <li>ask for prohibited IP</li>
+</ol>
+
+<p>&nbsp;</p>
+
+<pre>
+<code class="language-json">[
+   {
+      "id":1,
+      "name":"John Doe",
+      "username":"johen_doe",
+      "role":"user",
+      "password":"b51bfcfa2e352e4de32560f74b0cff3f"
+   },
+   {
+      "id":2,
+      "name":"Richard Roe",
+      "username":"richard2020",
+      "role":"admin",
+      "password":"e3274be5c857fb42ab72d786e281b4b8"
+   }
+]</code></pre>
+
+<p>...</p>
