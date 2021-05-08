@@ -15,21 +15,25 @@
 
 <p>Add the following rest-endpoints:</p>
 
-<ul>
-    <li>suspicious IP address
+<ol>
+    <li>Add a rest controller for suspicious IP address
         <ul>
-            <li>get a list <code>GET /antifraud/ip</code></li>
-            <li>add an item to the list <code>POST /antifraud/ip</code></li>
-            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/ip/{id}</code></li>
+            <li>get a list <code>GET /antifraud/suspicious-ip</code></li>
+            <li>add an item to the list <code>POST /antifraud/suspicious-ip</code> having a <em>request-param</em>
+                <code>ip</code></li>
+            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/suspicious-ip/{ip}</code> having
+                a <em>path-param</em> <code>ip</code></li>
         </ul>
     </li>
     <li>
-        <p>Stolen cards</p>
+        <p>Add a rest controller for the Stolen cards</p>
 
         <ul>
-            <li>get a list <code>GET /antifraud/stoeln</code></li>
-            <li>add an item to the list <code>POST /antifraud/stolen</code></li>
-            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/stolen/{id}</code></li>
+            <li>get a list <code>GET /antifraud/stolencard</code></li>
+            <li>add an item to the list <code>POST /antifraud/stolencard</code> having a <em>request-param</em>
+                <code>serial</code></li>
+            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/stolen/{serial}</code> having
+                a <em>path-param</em> <code>serial</code></li>
         </ul>
     </li>
     <li>
@@ -74,7 +78,7 @@
             </li>
         </ul>
     </li>
-</ul>
+</ol>
 
 <h2>Examples</h2>
 <h3>Sample of the data structures</h3>
@@ -87,24 +91,17 @@
     <li>ask for prohibited IP</li>
 </ol>
 
-<p>&nbsp;</p>
 
-<pre>
-<code class="language-json">[
-   {
-      "id":1,
-      "name":"John Doe",
-      "username":"johen_doe",
-      "role":"user",
-      "password":"b51bfcfa2e352e4de32560f74b0cff3f"
-   },
-   {
-      "id":2,
-      "name":"Richard Roe",
-      "username":"richard2020",
-      "role":"admin",
-      "password":"e3274be5c857fb42ab72d786e281b4b8"
-   }
-]</code></pre>
 
 <p>...</p>
+
+<h3>TODO</h3>
+<ol>
+    <li>Check rest parameter types not to be misleading or bad design</li>
+    <li>Think about having search for cards and IPs</li>
+    <li>The DataType for IP address in java is InetAddress. Think about either type to be that or explaining it
+        somewhere. <a
+                href="https://stackoverflow.com/questions/11319445/java-to-jackson-json-serialization-money-fields">Here</a>
+        you can find how to serialize BigDecimal
+    </li>
+</ol>
