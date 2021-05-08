@@ -1,4 +1,14 @@
 type: edu
 files:
-- name: test/Tests.java
+- name: src/antifraud/AntifraudApplication.java
+  visible: true
+- name: src/antifraud/model/User.java
   visible: false
+- name: build.gradle
+  visible: true
+- name: resources/user-schema.yaml
+  visible: true
+- name: src/antifraud/model/Role.java
+  visible: false
+- name: src/antifraud/exception/IncompletDataException.java
+  visible: true
