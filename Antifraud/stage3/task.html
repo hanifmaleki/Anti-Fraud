@@ -18,22 +18,40 @@
 <ol>
     <li>Add a rest controller for suspicious IP address
         <ul>
-            <li>get a list <code>GET /antifraud/suspicious-ip</code></li>
-            <li>add an item to the list <code>POST /antifraud/suspicious-ip</code> having a <em>request-param</em>
-                <code>ip</code></li>
-            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/suspicious-ip/{ip}</code> having
-                a <em>path-param</em> <code>ip</code></li>
+            <li>
+                get a list <code>GET /antifraud/suspicious-ip</code> returning HTTP status code<strong><code>200
+                OK</code></strong>
+            </li>
+            <li>
+                add an item to the list <code>POST /antifraud/suspicious-ip</code> having a <em>request-param</em>
+                <code>ip</code> returning HTTP status code <strong><code>201 Created </code></strong> for successful add
+                or HTTP status code <code><strong>409 Conflict</strong></code> if it is already exist.
+            </li>
+            <li>
+                remove an item from the list of suspicious IPs <code>DELETE /antifraud/suspicious-ip/{ip}</code> having
+                a <em>path-param</em> <code>ip</code> returning HTTP status code<strong><code>200 OK</code></strong> if
+                it is successful or HTTP <code><strong>404 Not Found</strong></code> if such a card does not exist.
+            </li>
         </ul>
     </li>
     <li>
         <p>Add a rest controller for the Stolen cards</p>
 
         <ul>
-            <li>get a list <code>GET /antifraud/stolencard</code></li>
-            <li>add an item to the list <code>POST /antifraud/stolencard</code> having a <em>request-param</em>
-                <code>serial</code></li>
-            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/stolen/{serial}</code> having
-                a <em>path-param</em> <code>serial</code></li>
+            <li>
+                get a list <code>GET /antifraud/stolencard</code> returning HTTP status code<strong><code>200 OK</code></strong>
+            </li>
+            <li>
+                add an item to the list <code>POST /antifraud/stolencard</code> having a <em>request-param</em>
+                <code>serial</code> returning HTTP status code <strong><code>201 Created </code></strong> for successful
+                add
+                or HTTP status code <code><strong>409 Conflict</strong></code> if it is already exist.
+            </li>
+            <li>
+                remove an item from the list of suspicious IPs <code>DELETE /antifraud/stolen/{serial}</code> having
+                a <em>path-param</em> <code>serial</code> returning HTTP status code<strong><code>200 OK</code></strong>
+                if it is successful or HTTP <code><strong>404 Not Found</strong></code> if such a card does not exist.
+            </li>
         </ul>
     </li>
     <li>
@@ -90,7 +108,6 @@
     <li>Ask for a valid trx</li>
     <li>ask for prohibited IP</li>
 </ol>
-
 
 
 <p>...</p>
