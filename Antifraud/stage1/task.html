@@ -1,52 +1,55 @@
-<html>
+<h2>Description</h2>
 
-<h2>Task Description: Tips & Tricks</h2>
+<p><br/>
+    Here, in the beginning, a simple measure is taken in order to prevent fraudsters from illegally transferring a large
+    portion of the currency from an account. Suppose some scammers have just gotten access to confidential financial
+    information through some phishing or pharming attacks. They immediately try to transfer as much currency as possible
+    to their accounts. Most of the time the account holder is not aware of the attack. Hence, the antifraud system
+    should prevent it before it is too late.</p>
 
-<p>This is a task description file.
-Its content will be displayed to a learner
-in the <strong>Task Description</strong> window.</p>
+<p>In the first stage, you need to create a simple rest endpoint that calculates whether a transaction is ALLOWED,
+    PROHIBITED, or need MANUAL_PROCESSING by using the amount of the transaction.&nbsp;</p>
 
-<p>It supports both Markdown and HTML.
-To toggle the format, you can rename <strong>task.md</strong>
-to <strong>task.html</strong>, or vice versa.
-The default task description format can be changed
-in <strong>Preferences | Tools | Education</strong>,
-but this will not affect any existing task description files.</p>
+<h2>Objectives</h2>
 
-<p>The following features are available in
-<strong>task.md/task.html</strong>
-which are specific to the EduTools plugin:</p>
+<p>Create a rest web-service<code>GET api/antifraud/transaction</code>which get a <em>transaction amount</em>&nbsp;with
+    name <em>amount as&nbsp;RequestParam&nbsp;</em>of type <em>Long</em>&nbsp;and specify the type based on the amount
+    of the transaction:</p>
 
 <ul>
-<li>Hints can be added anywhere in the task text.
-Type "hint" and press Tab.
-Hints should be added to an empty line in the task text.
-In hints you can use HTML only.
-<div class="hint">Text of your hint</div></li>
-
-<li>You may need to refer your learners to a particular lesson,
-task, or file. To achieve this, you can use the in-course links.
-Specify the path using the <code>&lt;a href="course://lesson1/task1/file1"&gt;
-link_text&lt;/a&gt;</code> format.</li><br>
-
-<li>You can insert shortcuts in the task description.
-While <strong>task.html/task.md</strong> is open,
-right-click anywhere on the <strong>Editor</strong> tab
-and choose the <strong>Insert shortcut</strong> option
-from the context menu.
-For example: &amp;shortcut:FileStructurePopup;.</li><br>
-
-<li>Insert the &percnt;<code>IDE_NAME</code>&percnt; macro,
-which will be replaced by the actual IDE name.
-For example, <strong>%IDE_NAME%</strong>.</li><br>
-
-<li>Insert PSI elements, by using links like
-<code>&lt;a href="psi_element://link.to.element"&gt;element description&lt;/a&gt;</code>.
-To get such a link, right-click the class or method
-and select <strong>Copy Reference</strong>.
-Then press &amp;shortcut:EditorPaste;
-to insert the link where appropriate.
-For example, a
-<a href="psi_element://java.lang.String#contains">link to the "contains" method</a>.</li>
+    <li>Transactions having amount lower or equal to 200 are ALLOWED</li>
+    <li>Transactions with an amount greater than 200 and lower or equal than 1500 need&nbsp;MANUAL_PROCESSING</li>
+    <li>Transactions having amount greater than 1500 are&nbsp;PROHIBITED</li>
 </ul>
-</html>
+
+<p>All of the above GET methods return <u>HTTP status code <em>200</em></u>.</p>
+
+<h2>Examples</h2>
+
+<ol>
+    <li><code>GET {{antifraud-host}}/api/antifraud/transaction?amount=150</code><br/>
+        <br/>
+        <img alt="" src="https://ucarecdn.com/84c753dd-4ba8-4530-bb62-3988cab89363/"/><br/>
+        <br/>
+        &nbsp;
+    </li>
+    <li><code>GET {{antifraud-host}}/api/antifraud/transaction?amount=870</code><br/>
+        &nbsp;
+        <p><img alt="" src="https://ucarecdn.com/6eeb0d3e-7c93-428b-ac00-552687a80dfb/"/></p>
+    </li>
+</ol>
+
+<p>&nbsp;</p>
+
+<h2>References</h2>
+
+<p>https://en.wikipedia.org/wiki/Pharming</p>
+
+<p>https://www.sciencedirect.com/topics/computer-science/scammer</p>
+
+<h2>TODOS</h2>
+<ol>
+    <li>Integer or Long is never appropriate data type for transferring money. Either explain it or replace integer with
+        BigDecimal. You can do it in step 3
+    </li>
+</ol>
