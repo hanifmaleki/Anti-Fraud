@@ -31,3 +31,5 @@ hs_err_pid*
 /stage-1/.gradle/
 /Antifraud/stage-1/build/
 /Antifraud/stage2/build/
+*/build/
+/Antifraud/stage3/build/
