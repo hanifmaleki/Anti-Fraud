@@ -1,52 +1,88 @@
-<html>
+<h2>Description</h2>
 
-<h2>Task Description: Tips & Tricks</h2>
+<p>Enterprise applications like an anti-fraud system are always used by different types of users having various access levels. It is not necessary that every user can access every part of the system. It becomes more important in the financial systems.</p>
 
-<p>This is a task description file.
-Its content will be displayed to a learner
-in the <strong>Task Description</strong> window.</p>
+<p>In this stage, a couple of rest endpoints are added to the system that enables user management. For the sake of simplicity, only two types of the user are considered. In real systems,&nbsp;however, there is a wider variety of&nbsp;<em>roles</em>&nbsp;and different access levels<em>.</em></p>
 
-<p>It supports both Markdown and HTML.
-To toggle the format, you can rename <strong>task.md</strong>
-to <strong>task.html</strong>, or vice versa.
-The default task description format can be changed
-in <strong>Preferences | Tools | Education</strong>,
-but this will not affect any existing task description files.</p>
-
-<p>The following features are available in
-<strong>task.md/task.html</strong>
-which are specific to the EduTools plugin:</p>
+<p>An anti-fraud system consists of two types of users:</p>
 
 <ul>
-<li>Hints can be added anywhere in the task text.
-Type "hint" and press Tab.
-Hints should be added to an empty line in the task text.
-In hints you can use HTML only.
-<div class="hint">Text of your hint</div></li>
-
-<li>You may need to refer your learners to a particular lesson,
-task, or file. To achieve this, you can use the in-course links.
-Specify the path using the <code>&lt;a href="course://lesson1/task1/file1"&gt;
-link_text&lt;/a&gt;</code> format.</li><br>
-
-<li>You can insert shortcuts in the task description.
-While <strong>task.html/task.md</strong> is open,
-right-click anywhere on the <strong>Editor</strong> tab
-and choose the <strong>Insert shortcut</strong> option
-from the context menu.
-For example: &amp;shortcut:FileStructurePopup;.</li><br>
-
-<li>Insert the &percnt;<code>IDE_NAME</code>&percnt; macro,
-which will be replaced by the actual IDE name.
-For example, <strong>%IDE_NAME%</strong>.</li><br>
-
-<li>Insert PSI elements, by using links like
-<code>&lt;a href="psi_element://link.to.element"&gt;element description&lt;/a&gt;</code>.
-To get such a link, right-click the class or method
-and select <strong>Copy Reference</strong>.
-Then press &amp;shortcut:EditorPaste;
-to insert the link where appropriate.
-For example, a
-<a href="psi_element://java.lang.String#contains">link to the "contains" method</a>.</li>
+    <li>Normal users who are able to ask whether a transaction is allowed</li>
+    <li>Admin users that can in addition to the query for a transaction, can change the main settings of the antifraud system e.g. add a &nbsp;stolen card number, add a prohibited IP address, etc. Furthermore, admin users can add/update/remove other users.</li>
 </ul>
-</html>
+
+<p>&nbsp;</p>
+
+<h2>Objectives</h2>
+
+<p>Assume data class <code>User</code>&nbsp; with the following properties:</p>
+
+<ul>
+    <li><code>name</code>: Complete the name and family of the user.</li>
+    <li><code>username</code>: username of the user.</li>
+    <li><code>reole</code>: the role of the user.</li>
+</ul>
+
+<p>Add the following rest-endpoint</p>
+
+<ol>
+    <li>An endpoint enables admin user(s) to add a user <code>POST /antifraud/user </code>enabling add new user returning HTTP status code
+
+        <ul>
+            <li>HTTP&nbsp;<strong><code>201 Created </code></strong>response status&nbsp;code if the user has been successfully added.</li>
+            <li>HTTP&nbsp;<code><strong>409 Conflict</strong></code>&nbsp;response status code if the username is duplicate.</li>
+            <li>HTTP&nbsp;<strong><code>422 Unprocessable Entity</code>&nbsp;</strong>if any of the three properties is missing.</li>
+        </ul>
+    </li>
+    <li>An endpoint enables admin user(s) to see a list of all users <code>GET /antifraud/user</code>&nbsp;<strike>with the encrypted password</strike> returning HTTP status code <strong><code>200 OK</code></strong>.</li>
+    <li>An endpoint enables the admin user(s) to delete a user <code>DELETE /antifraud/user/{userId}</code> returning HTTP status code
+        <ul>
+            <li>HTTP&nbsp;<code><strong>404 Not Found</strong></code>&nbsp;if such a username has not been added before.</li>
+            <li>HTTP <strong><code>200 OK</code></strong> if the operation has been completed succesfully.</li>
+        </ul>
+    </li>
+</ol>
+
+<p>&nbsp;</p>
+
+<h2>Examples</h2>
+
+<ol>
+    <li>Sample list of users:
+        <pre>
+<code class="language-json">
+    [
+        {
+            "name":"John Doe",
+            "username":"johen_doe",
+            "role":"user"
+        },
+        {
+            "name":"Richard Roe",
+            "username":"richard2020",
+            "role":"admin"
+        }
+    ]
+</code></pre>
+
+        <p>&nbsp;</p>
+    </li>
+    <li>Sample POST call
+        <p><img alt="" src="https://ucarecdn.com/7bf4ad57-5088-4bcb-a85a-9dab8694aec3/" /></p>
+    </li>
+    <li>Sample POST user with incomplete data:
+        <p><img alt="" src="https://ucarecdn.com/adbf715b-492d-4fce-9d54-ad9c47fe932e/" /></p>
+
+        <p>&nbsp;</p>
+    </li>
+    <li>Sample GET users call
+        <p><img alt="" src="https://ucarecdn.com/4de6c5bb-1d60-4c3d-8f11-2c27bc0a708a/" /></p>
+    </li>
+</ol>
+
+<h3>TODO:</h3>
+
+<ol>
+    <li>Find a way to make user type case insensitive</li>
+    <li>Add search user</li>
+</ol>
