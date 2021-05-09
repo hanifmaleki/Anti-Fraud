@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -109,62 +110,108 @@ public class AntifraudTest extends SpringTest {
 
     private void test1MainScenario() {
         // Add stolen card1
+        addStolenCardAndExpectStatus(stolenCard1, CREATED);
         // Get cards (1)
+        List<String> stolenCards = getStolenCardsAndExpectSize(1);
         // Check it is card1
+        checkItemExistInList(stolenCards, stolenCard1);
 
         // Add card1 another time and expect 409
+        addStolenCardAndExpectStatus(stolenCard1, CONFLICT);
 
         // Add stolen card2
+        addStolenCardAndExpectStatus(stolenCard2, CREATED);
         // Get cards (2)
+        stolenCards = getStolenCardsAndExpectSize(2);
+
         // Delete stolen card1
+        deleteCardAndExpect(stolenCard1, OK);
         // Get cards (1)
+        stolenCards = getStolenCardsAndExpectSize(1);
         // Check cards2
-        // Delete card(2)
-        // Get empty card list
+        checkItemExistInList(stolenCards, stolenCard2);
+
         // Delete non-existing card except and expect 404
+        deleteCardAndExpect(stolenCard1, NOT_FOUND);
+
+        // Delete card(2)
+        deleteCardAndExpect(stolenCard2, OK);
+
+        // Get empty card list
+        getStolenCardsAndExpectSize(0);
+
     }
 
     private void test2MainScenario() {
         // Add suspicious ip-1
+        addStolenCardAndExpectStatus(suspiciousIp1, CREATED);
         // Get list (1)
+        List<String> suspiciousIps = getSuspiciousIpsAndExpectSize(1);
         // Check it is ip-1
+        checkItemExistInList(suspiciousIps, suspiciousIp1);
 
         // Add IP-1 another time and expect 409
+        addStolenCardAndExpectStatus(suspiciousIp1, CONFLICT);
 
         // Add suspicious ip2
+        addStolenCardAndExpectStatus(suspiciousIp2, CREATED);
         // Get list (2)
+        suspiciousIps = getSuspiciousIpsAndExpectSize(2);
+
         // Delete IP1
+        deleteSuspiciousIpAndExpect(suspiciousIp1, OK);
         // Get cards (1)
+        suspiciousIps = getSuspiciousIpsAndExpectSize(1);
+
+        // Delete non-existing IP1 and except and expect 404
+        deleteSuspiciousIpAndExpect(suspiciousIp1, NOT_FOUND);
+
         // Check IP2
+        checkItemExistInList(suspiciousIps, suspiciousIp2);
         // Delete IP2
+        deleteSuspiciousIpAndExpect(suspiciousIp2, OK);
+
         // Get empty list
-        // Delete non-existing IP and except and expect 404
+        getSuspiciousIpsAndExpectSize(0);
+
     }
 
     private void test3MainScenario() {
         // Add stolen-card-1
+        addStolenCardAndExpectStatus(stolenCard1, CREATED);
         // Add stolen-card-2
+        addStolenCardAndExpectStatus(stolenCard2, CREATED);
+
         // Add suspicious-IP-1
+        addStolenCardAndExpectStatus(suspiciousIp1, CREATED);
         // Add suspicious-IP-2
+        addStolenCardAndExpectStatus(suspiciousIp2, CREATED);
 
         // test an allowed transaction
+        queryTrxAndExpect(trxAllowed, ResultEnum.ALLOWED);
 
         // test a manual-processing transaction
+        queryTrxAndExpect(trxManuall, ResultEnum.MANUAL_PROCESSING, "confirmed manually");
 
-        // test prohibitedTrx-1
-        // except card reason
+        // test prohibitedTrx-1 and except card reason
+        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "blacklist");
 
-        // test prohibitedTrx-2
-        // except ip reason
+        // test prohibitedTrx-2 and except ip reason
+        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "suspicious");
 
         // Given trxProhibited3 = amount > 2000 && card = card-1 && IP = ip1
-        // test trxX and except prohibited + all messages
+        // and except prohibited + all messages
+        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "above allowed value", "blacklist", "suspicious");
 
         //delete card-1
+        deleteCardAndExpect(stolenCard1, OK);
         // test trxProhibited3 and except prohibited + amount messages + ip message
+        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "above allowed value", "suspicious");
 
         //delete IP-1
+        deleteSuspiciousIpAndExpect(suspiciousIp1, OK);
         // test trxProhibited3 and except prohibited + amount messages
+        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "above allowed value");
 
     }
 
@@ -218,7 +265,8 @@ public class AntifraudTest extends SpringTest {
 
         String message = transactionResponse.getMessage();
         List<String> missingWords = Arrays.stream(expectedMessageWords)
-                .filter(word -> !message.contains(word))
+                .map(String::toLowerCase)
+                .filter(word -> !message.contains(word.toLowerCase()))
                 .collect(Collectors.toList());
         if (!missingWords.isEmpty()) {
             String feedback = missingWords.stream()
@@ -266,7 +314,7 @@ public class AntifraudTest extends SpringTest {
         }
     }
 
-    private void checkItemExistInList(String item, List<String> list) {
+    private void checkItemExistInList(List<String> list, String item) {
         if (!list.contains(item)) {
             String feedback = String.format("Can not find item %s in the list", item);
             throw new UnexpectedResultException(CheckResult.wrong(feedback));
