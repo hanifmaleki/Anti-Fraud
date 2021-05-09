@@ -1,5 +1,6 @@
 import antifraud.AntifraudApplication;
-import antifraud.model.Role;
+import antifraud.model.ResultEnum;
+import antifraud.model.Transaction;
 import antifraud.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,24 +13,75 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static org.springframework.http.HttpStatus.*;
 
 
 public class AntifraudTest extends SpringTest {
 
-    private static final String address = "/api/antifraud/user";
+    private static final String BASE_ADDRESS = "/api/antifraud";
+    private static final String IP_ADDRESS = BASE_ADDRESS + "/stolencard";
+    private static final String STOLEN_ADDRESS = BASE_ADDRESS + "/suspicious-ip";
+    private static final String TRX_ADDRESS = BASE_ADDRESS + "/transaction";
+
+    private final String stolenCard1;
+    private final String stolenCard2;
+    private final String okCard;
+    private final String suspiciousIp1;
+    private final String suspiciousIp2;
+    private final String okIp;
+    private final Transaction trxAllowed;
+    private final Transaction trxManuall;
+    private final Transaction trxProhibited1;
+    private final Transaction trxProhibited2;
+    private final Transaction trxProhibited3;
 
 
-    //    private final Gson gson = new Gson();
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public AntifraudTest() {
         super(AntifraudApplication.class);
+        stolenCard1 = "2223003122003222";
+        stolenCard2 = "5200828282828210";
+        okCard = "5105105105105100";
+        suspiciousIp1 = "192.168.0.12";
+        suspiciousIp2 = "198.18.0.6";
+        okIp = "172.16.0.9";
 
+        trxAllowed = Transaction
+                .builder()
+                .amount(60)
+                .ipAddress(okIp)
+                .cardSerial(okCard)
+                .build();
+
+        trxManuall = Transaction
+                .builder()
+                .amount(400)
+                .ipAddress(okIp)
+                .cardSerial(okCard)
+                .build();
+
+        trxProhibited1 = Transaction
+                .builder()
+                .amount(60)
+                .ipAddress(okIp)
+                .cardSerial(stolenCard2)
+                .build();
+
+        trxProhibited2 = Transaction
+                .builder()
+                .amount(400)
+                .ipAddress(suspiciousIp2)
+                .cardSerial(okCard)
+                .build();
+
+        trxProhibited3 = Transaction
+                .builder()
+                .amount(2001)
+                .ipAddress(suspiciousIp1)
+                .cardSerial(stolenCard1)
+                .build();
     }
 
 
@@ -89,20 +141,28 @@ public class AntifraudTest extends SpringTest {
 
     private void test3MainScenario() {
         // Add stolen-card-1
+        // Add stolen-card-2
         // Add suspicious-IP-1
+        // Add suspicious-IP-2
 
         // test an allowed transaction
 
         // test a manual-processing transaction
 
-        // Given trxX = amount > 2000 && card = card-1 && IP = ip1
+        // test prohibitedTrx-1
+        // except card reason
+
+        // test prohibitedTrx-2
+        // except ip reason
+
+        // Given trxProhibited3 = amount > 2000 && card = card-1 && IP = ip1
         // test trxX and except prohibited + all messages
 
         //delete card-1
-        // test trxX and except prohibited + amount messages + ip message
+        // test trxProhibited3 and except prohibited + amount messages + ip message
 
         //delete IP-1
-        // test trxX and except prohibited + amount messages
+        // test trxProhibited3 and except prohibited + amount messages
 
     }
 
@@ -128,8 +188,42 @@ public class AntifraudTest extends SpringTest {
         }
     }*/
 
+    private void addStolenCardAndExpectStatus(String serialNumber, HttpStatus expectedStatus) {
+        String json = toJson(serialNumber);
+        HttpRequest postRequest = post(STOLEN_ADDRESS, json);
+        HttpResponse send = postRequest.send();
+        int expectedCode = expectedStatus.value();
+        int receivedCode = send.getStatusCode();
+        if (receivedCode != expectedCode) {
+            String feedback = String.format("Expected status %d after adding card %s but received status %d",
+                    expectedCode, serialNumber, receivedCode);
+            throw new UnexpectedResultException(CheckResult.wrong(feedback));
+        }
+    }
+
+    private void getStolenCardsAndExpectSize(int expectedSize) {
+    }
+
+    private void deleteCardAndExpect(String serialNumber, HttpStatus expectedStatus) {
+    }
+
+    private void checkItemExistInList(String item, List<String> list) {
+    }
+
+    private void addSuspiciousIpAndExpectStatus(String ip, HttpStatus expectedStatus) {
+    }
+
+    private void getSuspiciousIpsAndExpectSize(int expectedSize) {
+    }
+
+    private void deleteSuspiciousIpAndExpect(String ip, HttpStatus expectedStatus) {
+    }
+
+    private void queryTrxAndExpect(Transaction transaction, ResultEnum expectedResult, String... expectedMessageWords) {
+    }
+
     private void deleteExistingUser(String username) {
-        HttpRequest delete = delete(address + "/" + username);
+        HttpRequest delete = delete(BASE_ADDRESS + "/" + username);
         HttpResponse response = delete.send();
         if (response.getStatusCode() != OK.value()) {
             String feedback = String.format("Could not delete existing user %s", username);
@@ -138,7 +232,7 @@ public class AntifraudTest extends SpringTest {
     }
 
     private void deleteNonExistingUser(String username) {
-        HttpRequest delete = delete(address + "/" + username);
+        HttpRequest delete = delete(BASE_ADDRESS + "/" + username);
         HttpResponse response = delete.send();
         int statusCode = response.getStatusCode();
         int expectedValue = NOT_FOUND.value();
@@ -152,7 +246,7 @@ public class AntifraudTest extends SpringTest {
     private HttpResponse addUser(User user) {
 //        String user1Json = gson.toJson(user1);
         String user1Json = toJson(user);
-        HttpRequest httpRequest = post(address, user1Json);
+        HttpRequest httpRequest = post(BASE_ADDRESS, user1Json);
         return httpRequest.send();
     }
 
@@ -164,7 +258,7 @@ public class AntifraudTest extends SpringTest {
         if (response.getStatusCode() != status) {
             String feedback = String.format("POST %s should respond with status code %d, responded: %d\n\n" +
                             "Response body:\n%s"
-                    , address, status, response.getStatusCode(), response.getContent());
+                    , BASE_ADDRESS, status, response.getStatusCode(), response.getContent());
             CheckResult result = CheckResult.wrong(feedback);
 
             throw new UnexpectedResultException(result);
@@ -176,13 +270,13 @@ public class AntifraudTest extends SpringTest {
     }
 
     private List<User> getUsersAndExpectSize(Integer expectedSize) {
-        HttpRequest httpRequest = get(address);
+        HttpRequest httpRequest = get(BASE_ADDRESS);
         HttpResponse response = httpRequest.send();
 
         if (response.getStatusCode() != OK.value()) {
             String feedback = String.format("GET %s should respond with status code 200, responded: %d\n\n" +
                             "Response body:\n%s"
-                    , address, response.getStatusCode(), response.getContent());
+                    , BASE_ADDRESS, response.getStatusCode(), response.getContent());
             CheckResult result = CheckResult.wrong(feedback);
             throw new UnexpectedResultException(result);
         }
