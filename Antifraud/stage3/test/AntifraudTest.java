@@ -1,6 +1,7 @@
 import antifraud.AntifraudApplication;
 import antifraud.model.ResultEnum;
 import antifraud.model.Transaction;
+import antifraud.model.TransactionResponse;
 import antifraud.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -167,134 +169,110 @@ public class AntifraudTest extends SpringTest {
     }
 
 
-   /* private void checkUserExistingList(List<User> users, User user) {
-        User receivedUser = users.stream().filter(user::equals).findFirst().orElseThrow(() -> {
-            String feedback = String.format("The expected user %s does nt exist in the received list", user1);
-            return new UnexpectedResultException(CheckResult.wrong(feedback));
-        });
-
-        boolean isDifferent =
-                !user.getName().equals(receivedUser.getName()) ||
-                        !user.getUsername().equals(receivedUser.getUsername()) ||
-                        user.getRole() != receivedUser.getRole();
-
-        if (isDifferent) {
-            String feedback = String.format(
-                    "The received user is not matched with created user.\n Get: %s \n Expected: %s",
-                    receivedUser,
-                    user
-            );
-            throw new UnexpectedResultException(CheckResult.wrong(feedback));
-        }
-    }*/
 
     private void addStolenCardAndExpectStatus(String serialNumber, HttpStatus expectedStatus) {
         String json = toJson(serialNumber);
         HttpRequest postRequest = post(STOLEN_ADDRESS, json);
-        HttpResponse send = postRequest.send();
+        sendPostRequestAndExpect(serialNumber, expectedStatus, postRequest);
+    }
+
+
+    private List<String> getStolenCardsAndExpectSize(int expectedSize) {
+        HttpRequest getRequest = get(STOLEN_ADDRESS);
+        return getListOfStringWithExpectedSize(expectedSize, getRequest);
+    }
+
+    private void deleteCardAndExpect(String serialNumber, HttpStatus expectedStatus) {
+        HttpRequest deleteRequest = delete(STOLEN_ADDRESS + "/" + serialNumber);
+        sendDeleteRequestAndExpect(serialNumber, expectedStatus, deleteRequest);
+
+    }
+
+    private void addSuspiciousIpAndExpectStatus(String ip, HttpStatus expectedStatus) {
+        String json = toJson(ip);
+        HttpRequest postRequest = post(IP_ADDRESS, json);
+        sendPostRequestAndExpect(ip, expectedStatus, postRequest);
+    }
+
+    private List<String> getSuspiciousIpsAndExpectSize(int expectedSize) {
+        HttpRequest getRequest = get(IP_ADDRESS);
+        return getListOfStringWithExpectedSize(expectedSize, getRequest);
+    }
+
+    private void deleteSuspiciousIpAndExpect(String ip, HttpStatus expectedStatus) {
+        HttpRequest deleteRequest = delete(STOLEN_ADDRESS + "/" + ip);
+        sendDeleteRequestAndExpect(ip, expectedStatus, deleteRequest);
+    }
+
+    private void queryTrxAndExpect(Transaction transaction, ResultEnum expectedResult, String... expectedMessageWords) {
+        HttpRequest getRequest = get(TRX_ADDRESS);
+        HttpResponse response = getRequest.send();
+        TransactionResponse transactionResponse = fromJson(response, TransactionResponse.class);
+
+        ResultEnum receivedResult = transactionResponse.getResult();
+        if (receivedResult != expectedResult) {
+            String feedback = String.format("The transaction %s result is %s but expected to be %s",
+                    transaction.toString(), receivedResult, expectedResult);
+            throw new UnexpectedResultException(CheckResult.wrong(feedback));
+        }
+
+        String message = transactionResponse.getMessage();
+        List<String> missingWords = Arrays.stream(expectedMessageWords)
+                .filter(word -> !message.contains(word))
+                .collect(Collectors.toList());
+        if (!missingWords.isEmpty()) {
+            String feedback = missingWords.stream()
+                    .collect(Collectors.joining("\n", "The result message is missing the following phrase(s):\n", ""));
+            throw new UnexpectedResultException(CheckResult.wrong(feedback));
+        }
+    }
+
+    private List<String> getListOfStringWithExpectedSize(int expectedSize, HttpRequest getRequest) {
+        HttpResponse httpResponse = getRequest.send();
+        int receivedCode = httpResponse.getStatusCode();
+        if (receivedCode != OK.value()) {
+            String feedback = String.format("Unexpected get result %d", receivedCode);
+            throw new UnexpectedResultException(CheckResult.wrong(feedback));
+        }
+        List<String> list = Arrays.asList(fromJson(httpResponse, String[].class));
+        int receivedSize = list.size();
+        if (receivedSize != expectedSize) {
+            String feedback = String.format("The expected list size is %d, however received %d", expectedSize, receivedSize);
+            throw new UnexpectedResultException(CheckResult.wrong(feedback));
+        }
+        return list;
+    }
+
+    private void sendPostRequestAndExpect(String serialNumber, HttpStatus expectedStatus, HttpRequest postRequest) {
+        HttpResponse httpResponse = postRequest.send();
         int expectedCode = expectedStatus.value();
-        int receivedCode = send.getStatusCode();
+        int receivedCode = httpResponse.getStatusCode();
         if (receivedCode != expectedCode) {
-            String feedback = String.format("Expected status %d after adding card %s but received status %d",
+            String feedback = String.format("Expected status %d after adding item %s but received status %d",
                     expectedCode, serialNumber, receivedCode);
             throw new UnexpectedResultException(CheckResult.wrong(feedback));
         }
     }
 
-    private void getStolenCardsAndExpectSize(int expectedSize) {
-    }
+    private void sendDeleteRequestAndExpect(String serialNumber, HttpStatus expectedStatus, HttpRequest deleteRequest) {
+        HttpResponse response = deleteRequest.send();
 
-    private void deleteCardAndExpect(String serialNumber, HttpStatus expectedStatus) {
+        int statusCode = response.getStatusCode();
+        int expectedValue = expectedStatus.value();
+        if (statusCode != expectedValue) {
+            String feedback = String.format("Delete operation of %s expect code %d but received code %d"
+                    , serialNumber, expectedValue, statusCode);
+            throw new UnexpectedResultException(CheckResult.wrong(feedback));
+        }
     }
 
     private void checkItemExistInList(String item, List<String> list) {
-    }
-
-    private void addSuspiciousIpAndExpectStatus(String ip, HttpStatus expectedStatus) {
-    }
-
-    private void getSuspiciousIpsAndExpectSize(int expectedSize) {
-    }
-
-    private void deleteSuspiciousIpAndExpect(String ip, HttpStatus expectedStatus) {
-    }
-
-    private void queryTrxAndExpect(Transaction transaction, ResultEnum expectedResult, String... expectedMessageWords) {
-    }
-
-    private void deleteExistingUser(String username) {
-        HttpRequest delete = delete(BASE_ADDRESS + "/" + username);
-        HttpResponse response = delete.send();
-        if (response.getStatusCode() != OK.value()) {
-            String feedback = String.format("Could not delete existing user %s", username);
+        if (!list.contains(item)) {
+            String feedback = String.format("Can not find item %s in the list", item);
             throw new UnexpectedResultException(CheckResult.wrong(feedback));
         }
     }
 
-    private void deleteNonExistingUser(String username) {
-        HttpRequest delete = delete(BASE_ADDRESS + "/" + username);
-        HttpResponse response = delete.send();
-        int statusCode = response.getStatusCode();
-        int expectedValue = NOT_FOUND.value();
-        if (statusCode != expectedValue) {
-            String feedback = String.format("Not existing user %s deletion should return code %d and not %d"
-                    , username, expectedValue, statusCode);
-            throw new UnexpectedResultException(CheckResult.wrong(feedback));
-        }
-    }
-
-    private HttpResponse addUser(User user) {
-//        String user1Json = gson.toJson(user1);
-        String user1Json = toJson(user);
-        HttpRequest httpRequest = post(BASE_ADDRESS, user1Json);
-        return httpRequest.send();
-    }
-
-    private void addUserAndExceptStatus(User user, HttpStatus httpStatus) {
-        // Add User
-        HttpResponse response = this.addUser(user);
-        // Except httpStatus
-        int status = httpStatus.value();
-        if (response.getStatusCode() != status) {
-            String feedback = String.format("POST %s should respond with status code %d, responded: %d\n\n" +
-                            "Response body:\n%s"
-                    , BASE_ADDRESS, status, response.getStatusCode(), response.getContent());
-            CheckResult result = CheckResult.wrong(feedback);
-
-            throw new UnexpectedResultException(result);
-        }
-    }
-
-    private List<User> getUsers() {
-        return this.getUsersAndExpectSize(null);
-    }
-
-    private List<User> getUsersAndExpectSize(Integer expectedSize) {
-        HttpRequest httpRequest = get(BASE_ADDRESS);
-        HttpResponse response = httpRequest.send();
-
-        if (response.getStatusCode() != OK.value()) {
-            String feedback = String.format("GET %s should respond with status code 200, responded: %d\n\n" +
-                            "Response body:\n%s"
-                    , BASE_ADDRESS, response.getStatusCode(), response.getContent());
-            CheckResult result = CheckResult.wrong(feedback);
-            throw new UnexpectedResultException(result);
-        }
-
-//        List<User> users = Arrays.asList(gson.fromJson(response.getContent(), User[].class));
-        List<User> users = Arrays.asList(fromJson(response, User[].class));
-
-        if (expectedSize != null) {
-            int size = users.size();
-            if (size != expectedSize) {
-                String feedback = String.format("Number of users should be 1. The received list size is %d", size);
-                CheckResult result = CheckResult.wrong(feedback);
-                throw new UnexpectedResultException(result);
-            }
-        }
-
-        return users;
-    }
 
 
     private CheckResult runtTestScenario(Runnable testScenario) {
@@ -329,8 +307,7 @@ public class AntifraudTest extends SpringTest {
 
     private <T> T fromJson(HttpResponse response, Class<T> clazz) {
         try {
-            T object = objectMapper.readValue(response.getContent(), clazz);
-            return object;
+            return objectMapper.readValue(response.getContent(), clazz);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
