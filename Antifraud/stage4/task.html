@@ -1,52 +1,53 @@
 <html>
+<h2>Description</h2>
+<p>
+    An enterprise anti-fraud system has hundreds of users who take advantage of the system by only checking validity of
+    the transactions.
+    Such kind of users do not need to modify and see list of stolen cards, suspicious IP addresses and even other users.
+    On the other hand there are very limited number of users eho are completely trusted by users and are allowed to
+    access and modify more sensitive data.
+</p>
+<p>
+    In this stage authentication and authorization ...
 
-<h2>Task Description: Tips & Tricks</h2>
+</p>
+<ol>
+    <li>
+    for this reason, it is necessary to define password for the users ...
+    </li>
+    <li>
+    Why not maintaining passwords as simple text
+    </li>
+    <li>
+        What is hash function ... MD5 (for simplicity)
+    </li>
+</ol>
 
-<p>This is a task description file.
-Its content will be displayed to a learner
-in the <strong>Task Description</strong> window.</p>
+<h2>Objectives</h2>
 
-<p>It supports both Markdown and HTML.
-To toggle the format, you can rename <strong>task.md</strong>
-to <strong>task.html</strong>, or vice versa.
-The default task description format can be changed
-in <strong>Preferences | Tools | Education</strong>,
-but this will not affect any existing task description files.</p>
+<ol>
+    <li>Enrich the User model by adding field <code>password</code> ...</li>
+    <li>Passwords are immediately encoded ...</li>
+    <li>Add an endpoint to user controller for changing password ...</li>
+    <li>Add a preconfigured admin user admin with password admin should be added by default.</li>
+    <li>Normal user can only do the following:
+        <ul>
+            <li>Change her/his password</li>
+            <li>Ask for the validity of a transaction</li>
+            <li><strike>See the list of stolen cards</strike></li>
+            <li><strike>Add a stolen card</strike></li>
+            <li><strike>See the list of suspicious IPs</strike></li>
+            <li><strike>Add suspicious IPs</strike></li>
+        </ul>
+    </li>
+    <li>Updating/Adding/Removing other users, removing suspicious IP and stolen cards are only done by the admin
+        users.
+    </li>
+    <li>Enrich fraud detection service to prohibit stolen cards and suspicious IPs</li>
+</ol>
 
-<p>The following features are available in
-<strong>task.md/task.html</strong>
-which are specific to the EduTools plugin:</p>
+<h2>Examples</h2>
 
-<ul>
-<li>Hints can be added anywhere in the task text.
-Type "hint" and press Tab.
-Hints should be added to an empty line in the task text.
-In hints you can use HTML only.
-<div class="hint">Text of your hint</div></li>
+<p><strike>with the encrypted password</strike></p>
 
-<li>You may need to refer your learners to a particular lesson,
-task, or file. To achieve this, you can use the in-course links.
-Specify the path using the <code>&lt;a href="course://lesson1/task1/file1"&gt;
-link_text&lt;/a&gt;</code> format.</li><br>
-
-<li>You can insert shortcuts in the task description.
-While <strong>task.html/task.md</strong> is open,
-right-click anywhere on the <strong>Editor</strong> tab
-and choose the <strong>Insert shortcut</strong> option
-from the context menu.
-For example: &amp;shortcut:FileStructurePopup;.</li><br>
-
-<li>Insert the &percnt;<code>IDE_NAME</code>&percnt; macro,
-which will be replaced by the actual IDE name.
-For example, <strong>%IDE_NAME%</strong>.</li><br>
-
-<li>Insert PSI elements, by using links like
-<code>&lt;a href="psi_element://link.to.element"&gt;element description&lt;/a&gt;</code>.
-To get such a link, right-click the class or method
-and select <strong>Copy Reference</strong>.
-Then press &amp;shortcut:EditorPaste;
-to insert the link where appropriate.
-For example, a
-<a href="psi_element://java.lang.String#contains">link to the "contains" method</a>.</li>
-</ul>
 </html>

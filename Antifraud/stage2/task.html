@@ -1,14 +1,21 @@
 <h2>Description</h2>
 
-<p>Enterprise applications like an anti-fraud system are always used by different types of users having various access levels. It is not necessary that every user can access every part of the system. It becomes more important in the financial systems.</p>
+<p>Enterprise applications like an anti-fraud system are always used by different types of users having various access
+    levels. It is not necessary that every user can access every part of the system. It becomes more important in the
+    financial systems.</p>
 
-<p>In this stage, a couple of rest endpoints are added to the system that enables user management. For the sake of simplicity, only two types of the user are considered. In real systems,&nbsp;however, there is a wider variety of&nbsp;<em>roles</em>&nbsp;and different access levels<em>.</em></p>
+<p>In this stage, a couple of rest endpoints are added to the system that enables user management. For the sake of
+    simplicity, only two types of the user are considered. In real systems,&nbsp;however, there is a wider variety of&nbsp;<em>roles</em>&nbsp;and
+    different access levels<em>.</em></p>
 
 <p>An anti-fraud system consists of two types of users:</p>
 
 <ul>
     <li>Normal users who are able to ask whether a transaction is allowed</li>
-    <li>Admin users that can in addition to the query for a transaction, can change the main settings of the antifraud system e.g. add a &nbsp;stolen card number, add a prohibited IP address, etc. Furthermore, admin users can add/update/remove other users.</li>
+    <li>Admin users that can in addition to the query for a transaction, can change the main settings of the antifraud
+        system e.g. add a &nbsp;stolen card number, add a prohibited IP address, etc. Furthermore, admin users can
+        add/update/remove other users.
+    </li>
 </ul>
 
 <p>&nbsp;</p>
@@ -26,18 +33,29 @@
 <p>Add the following rest-endpoint</p>
 
 <ol>
-    <li>An endpoint enables admin user(s) to add a user <code>POST /antifraud/user </code>enabling add new user returning HTTP status code
+    <li>An endpoint enables admin user(s) to add a user <code>POST /antifraud/user </code>enabling add new user
+        returning HTTP status code
 
         <ul>
-            <li>HTTP&nbsp;<strong><code>201 Created </code></strong>response status&nbsp;code if the user has been successfully added.</li>
-            <li>HTTP&nbsp;<code><strong>409 Conflict</strong></code>&nbsp;response status code if the username is duplicate.</li>
-            <li>HTTP&nbsp;<strong><code>422 Unprocessable Entity</code>&nbsp;</strong>if any of the three properties is missing.</li>
+            <li>HTTP&nbsp;<strong><code>201 Created </code></strong>response status&nbsp;code if the user has been
+                successfully added.
+            </li>
+            <li>HTTP&nbsp;<code><strong>409 Conflict</strong></code>&nbsp;response status code if the username is
+                duplicate.
+            </li>
+            <li>HTTP&nbsp;<strong><code>422 Unprocessable Entity</code>&nbsp;</strong>if any of the three properties is
+                missing.
+            </li>
         </ul>
     </li>
-    <li>An endpoint enables admin user(s) to see a list of all users <code>GET /antifraud/user</code>&nbsp;<strike>with the encrypted password</strike> returning HTTP status code <strong><code>200 OK</code></strong>.</li>
-    <li>An endpoint enables the admin user(s) to delete a user <code>DELETE /antifraud/user/{username}</code> returning HTTP status code
+    <li>An endpoint enables admin user(s) to see a list of all users <code>GET /antifraud/user</code>&nbsp; returning
+        HTTP status code <strong><code>200 OK</code></strong>.
+    </li>
+    <li>An endpoint enables the admin user(s) to delete a user <code>DELETE /antifraud/user/{username}</code> returning
+        HTTP status code
         <ul>
-            <li>HTTP&nbsp;<code><strong>404 Not Found</strong></code>&nbsp;if such a username has not been added before.</li>
+            <li>HTTP&nbsp;<code><strong>404 Not Found</strong></code>&nbsp;if such a username has not been added before.
+            </li>
             <li>HTTP <strong><code>200 OK</code></strong> if the operation has been completed succesfully.</li>
         </ul>
     </li>
@@ -68,15 +86,15 @@
         <p>&nbsp;</p>
     </li>
     <li>Sample POST call
-        <p><img alt="" src="https://ucarecdn.com/7bf4ad57-5088-4bcb-a85a-9dab8694aec3/" /></p>
+        <p><img alt="" src="https://ucarecdn.com/7bf4ad57-5088-4bcb-a85a-9dab8694aec3/"/></p>
     </li>
     <li>Sample POST user with incomplete data:
-        <p><img alt="" src="https://ucarecdn.com/adbf715b-492d-4fce-9d54-ad9c47fe932e/" /></p>
+        <p><img alt="" src="https://ucarecdn.com/adbf715b-492d-4fce-9d54-ad9c47fe932e/"/></p>
 
         <p>&nbsp;</p>
     </li>
     <li>Sample GET users call
-        <p><img alt="" src="https://ucarecdn.com/4de6c5bb-1d60-4c3d-8f11-2c27bc0a708a/" /></p>
+        <p><img alt="" src="https://ucarecdn.com/4de6c5bb-1d60-4c3d-8f11-2c27bc0a708a/"/></p>
     </li>
 </ol>
 
