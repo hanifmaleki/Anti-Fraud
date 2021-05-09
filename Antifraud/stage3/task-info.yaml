@@ -6,3 +6,7 @@ files:
   visible: true
 - name: resources/user-schema.yaml
   visible: true
+- name: src/antifraud/service/SuspiciousIpService.java
+  visible: true
+- name: src/antifraud/service/TransactionService.java
+  visible: true
