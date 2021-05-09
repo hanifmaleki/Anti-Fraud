@@ -14,3 +14,11 @@ files:
   visible: false
 - name: src/antifraud/service/MD5encoder.java
   visible: false
+- name: test/UserTestUtil.java
+  visible: false
+- name: test/TestUtil.java
+  visible: false
+- name: test/UnexpectedResultException.java
+  visible: false
+- name: test/TestDataProvider.java
+  visible: false
