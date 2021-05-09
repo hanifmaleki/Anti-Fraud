@@ -14,4 +14,7 @@ public class User {
 
     @EqualsAndHashCode.Exclude
     private Role role;
+
+    @EqualsAndHashCode.Exclude
+    private String password;
 }
