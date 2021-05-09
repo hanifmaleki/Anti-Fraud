@@ -12,3 +12,5 @@ files:
   visible: false
 - name: test/Tests.java
   visible: false
+- name: src/antifraud/service/MD5encoder.java
+  visible: false
