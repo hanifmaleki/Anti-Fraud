@@ -2,9 +2,9 @@ import antifraud.AntifraudApplication;
 import antifraud.model.ResultEnum;
 import antifraud.model.Transaction;
 import antifraud.model.TransactionResponse;
-import antifraud.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.entity.ContentType;
 import org.hyperskill.hstest.dynamic.DynamicTest;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
@@ -13,18 +13,18 @@ import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
-
 public class AntifraudTest extends SpringTest {
 
     private static final String BASE_ADDRESS = "/api/antifraud";
-    private static final String IP_ADDRESS = BASE_ADDRESS + "/stolencard";
-    private static final String STOLEN_ADDRESS = BASE_ADDRESS + "/suspicious-ip";
+    private static final String IP_ADDRESS = BASE_ADDRESS + "/suspicious-ip";
+    private static final String STOLEN_ADDRESS = BASE_ADDRESS + "/stolencard";
     private static final String TRX_ADDRESS = BASE_ADDRESS + "/transaction";
 
     private final String stolenCard1;
@@ -44,9 +44,9 @@ public class AntifraudTest extends SpringTest {
 
     public AntifraudTest() {
         super(AntifraudApplication.class);
-        stolenCard1 = "2223003122003222";
-        stolenCard2 = "5200828282828210";
-        okCard = "5105105105105100";
+        stolenCard1 = "2223-0031-2200-3222";
+        stolenCard2 = "5200-8282-8282-8210";
+        okCard = "5105-1051-0510-5100";
         suspiciousIp1 = "192.168.0.12";
         suspiciousIp2 = "198.18.0.6";
         okIp = "172.16.0.9";
@@ -90,136 +90,176 @@ public class AntifraudTest extends SpringTest {
 
     @DynamicTest
         // Test IP rest controller
-    CheckResult testSuspiciousIp1() {
-        return runtTestScenario(this::test1MainScenario);
+    CheckResult test1SuspiciousIp() {
+        return runtTestScenario(this::testIpScenario);
+
     }
 
     @DynamicTest
         // Adding incomplete users and expect 209
-    CheckResult testUser2() {
-        return runtTestScenario(this::test2MainScenario);
+    CheckResult test2Card() {
+        return runtTestScenario(this::testCardScenario);
     }
 
 
     @DynamicTest
         // Delete non-existing user and except 404 NOT_FOUND
-    CheckResult testUser3() {
-        return runtTestScenario(this::test3MainScenario);
+    CheckResult test3Transaction() {
+        return runtTestScenario(this::testTransactionScenario);
     }
 
 
-    private void test1MainScenario() {
+    private void testCardScenario() {
         // Add stolen card1
+        log("Add stolen card {}", stolenCard1);
         addStolenCardAndExpectStatus(stolenCard1, CREATED);
+
         // Get cards (1)
+        log("Get card list and expect size 1");
         List<String> stolenCards = getStolenCardsAndExpectSize(1);
         // Check it is card1
+        log("Check card {} exist in list {}", stolenCard1, stolenCards);
         checkItemExistInList(stolenCards, stolenCard1);
 
         // Add card1 another time and expect 409
+        log("Add existing stolen card {} and except conflict", stolenCard1);
         addStolenCardAndExpectStatus(stolenCard1, CONFLICT);
 
         // Add stolen card2
+        log("Add stolen card {}", stolenCard2);
         addStolenCardAndExpectStatus(stolenCard2, CREATED);
         // Get cards (2)
-        stolenCards = getStolenCardsAndExpectSize(2);
+        log("Get card list and expect size 2");
+        getStolenCardsAndExpectSize(2);
 
         // Delete stolen card1
+        log("Delete stolen card {}", stolenCard1);
         deleteCardAndExpect(stolenCard1, OK);
         // Get cards (1)
+        log("Get card list and expect size 1");
         stolenCards = getStolenCardsAndExpectSize(1);
         // Check cards2
+        log("Check card {} exist in list {}", stolenCard2, stolenCards);
         checkItemExistInList(stolenCards, stolenCard2);
 
         // Delete non-existing card except and expect 404
+        log("Delete non-existing stolen card {} and except NOT_FOUND", stolenCard1);
         deleteCardAndExpect(stolenCard1, NOT_FOUND);
 
         // Delete card(2)
+        log("Delete stolen card {}", stolenCard2);
         deleteCardAndExpect(stolenCard2, OK);
 
         // Get empty card list
+        log("Get empty stolen card list");
         getStolenCardsAndExpectSize(0);
 
     }
 
-    private void test2MainScenario() {
+    private void testIpScenario() {
         // Add suspicious ip-1
-        addStolenCardAndExpectStatus(suspiciousIp1, CREATED);
+        log("Add suspicious IP {}", suspiciousIp1);
+        addSuspiciousIpAndExpectStatus(suspiciousIp1, CREATED);
+
         // Get list (1)
+        log("Get IP list and expect size 1");
         List<String> suspiciousIps = getSuspiciousIpsAndExpectSize(1);
         // Check it is ip-1
+        log("Check {} exist in list {}", suspiciousIp1, suspiciousIps);
         checkItemExistInList(suspiciousIps, suspiciousIp1);
 
         // Add IP-1 another time and expect 409
-        addStolenCardAndExpectStatus(suspiciousIp1, CONFLICT);
+        log("Add already existing suspicious IP {} and expect conflict", suspiciousIp1);
+        addSuspiciousIpAndExpectStatus(suspiciousIp1, CONFLICT);
 
         // Add suspicious ip2
-        addStolenCardAndExpectStatus(suspiciousIp2, CREATED);
+        log("Add suspicious IP {}", suspiciousIp2);
+        addSuspiciousIpAndExpectStatus(suspiciousIp2, CREATED);
         // Get list (2)
-        suspiciousIps = getSuspiciousIpsAndExpectSize(2);
+        log("Get IP list and expect size 2");
+        getSuspiciousIpsAndExpectSize(2);
 
         // Delete IP1
+        log("Delete IP {}", suspiciousIp1);
         deleteSuspiciousIpAndExpect(suspiciousIp1, OK);
         // Get cards (1)
+        log("Get IP list and expect size 1");
         suspiciousIps = getSuspiciousIpsAndExpectSize(1);
 
         // Delete non-existing IP1 and except and expect 404
+        log("Delete non-existing IP {} and except and expect 404", suspiciousIp1);
         deleteSuspiciousIpAndExpect(suspiciousIp1, NOT_FOUND);
 
         // Check IP2
+        log("Check {} exist in list {}", suspiciousIp2, suspiciousIps);
         checkItemExistInList(suspiciousIps, suspiciousIp2);
         // Delete IP2
+        log("Delete IP {}", suspiciousIp2);
         deleteSuspiciousIpAndExpect(suspiciousIp2, OK);
 
         // Get empty list
+        log("Get empty Suspicious IP list");
         getSuspiciousIpsAndExpectSize(0);
 
     }
 
-    private void test3MainScenario() {
+    private void testTransactionScenario() {
         // Add stolen-card-1
+        log("Add stolen card {}", stolenCard1);
         addStolenCardAndExpectStatus(stolenCard1, CREATED);
         // Add stolen-card-2
+        log("Add stolen card {}", stolenCard2);
         addStolenCardAndExpectStatus(stolenCard2, CREATED);
 
         // Add suspicious-IP-1
-        addStolenCardAndExpectStatus(suspiciousIp1, CREATED);
+        log("Add suspicious IP {}", suspiciousIp1);
+        addSuspiciousIpAndExpectStatus(suspiciousIp1, CREATED);
         // Add suspicious-IP-2
-        addStolenCardAndExpectStatus(suspiciousIp2, CREATED);
+        log("Add suspicious IP {}", suspiciousIp2);
+        addSuspiciousIpAndExpectStatus(suspiciousIp2, CREATED);
 
         // test an allowed transaction
+        log("Expected allow result from transaction \n {}", trxAllowed);
         queryTrxAndExpect(trxAllowed, ResultEnum.ALLOWED);
 
         // test a manual-processing transaction
+        log("Expected MANUAL result from transaction \n {}", trxManuall);
         queryTrxAndExpect(trxManuall, ResultEnum.MANUAL_PROCESSING, "confirmed manually");
 
         // test prohibitedTrx-1 and except card reason
-        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "blacklist");
+        log("Expected CARD PROHIBITED result from transaction \n {}", trxProhibited1);
+        queryTrxAndExpect(trxProhibited1, ResultEnum.PROHIBITED, "blacklist");
 
         // test prohibitedTrx-2 and except ip reason
-        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "suspicious");
+        log("Expected IP PROHIBITED result from transaction \n {}", trxProhibited1);
+        queryTrxAndExpect(trxProhibited2, ResultEnum.PROHIBITED, "suspicious");
 
         // Given trxProhibited3 = amount > 2000 && card = card-1 && IP = ip1
         // and except prohibited + all messages
-        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "above allowed value", "blacklist", "suspicious");
+        log("Expected all types PROHIBITED result from transaction \n {}", trxProhibited3);
+        queryTrxAndExpect(trxProhibited3, ResultEnum.PROHIBITED, "above allowed value", "blacklist", "suspicious");
 
         //delete card-1
+        log("Delete card {}", stolenCard1);
         deleteCardAndExpect(stolenCard1, OK);
         // test trxProhibited3 and except prohibited + amount messages + ip message
-        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "above allowed value", "suspicious");
+        log("Expected IP+VALUE PROHIBITED result from transaction \n {}", trxProhibited3);
+        queryTrxAndExpect(trxProhibited3, ResultEnum.PROHIBITED, "above allowed value", "suspicious");
 
         //delete IP-1
+        log("Delete suspicious IP {}", suspiciousIp1);
         deleteSuspiciousIpAndExpect(suspiciousIp1, OK);
         // test trxProhibited3 and except prohibited + amount messages
-        queryTrxAndExpect(trxManuall, ResultEnum.PROHIBITED, "above allowed value");
+        log("Expected VALUE PROHIBITED result from transaction \n {}", trxProhibited3);
+        queryTrxAndExpect(trxProhibited3, ResultEnum.PROHIBITED, "above allowed value");
 
     }
 
 
-
     private void addStolenCardAndExpectStatus(String serialNumber, HttpStatus expectedStatus) {
-        String json = toJson(serialNumber);
-        HttpRequest postRequest = post(STOLEN_ADDRESS, json);
+        Map<String, String> params = new HashMap<>();
+        params.put("serialNumber", serialNumber);
+        HttpRequest postRequest = post(STOLEN_ADDRESS, params);
         sendPostRequestAndExpect(serialNumber, expectedStatus, postRequest);
     }
 
@@ -236,8 +276,9 @@ public class AntifraudTest extends SpringTest {
     }
 
     private void addSuspiciousIpAndExpectStatus(String ip, HttpStatus expectedStatus) {
-        String json = toJson(ip);
-        HttpRequest postRequest = post(IP_ADDRESS, json);
+        Map<String, String> params = new HashMap<>();
+        params.put("ip", ip);
+        HttpRequest postRequest = post(IP_ADDRESS, params);
         sendPostRequestAndExpect(ip, expectedStatus, postRequest);
     }
 
@@ -247,12 +288,14 @@ public class AntifraudTest extends SpringTest {
     }
 
     private void deleteSuspiciousIpAndExpect(String ip, HttpStatus expectedStatus) {
-        HttpRequest deleteRequest = delete(STOLEN_ADDRESS + "/" + ip);
+        HttpRequest deleteRequest = delete(IP_ADDRESS + "/" + ip);
+        System.out.println(deleteRequest.getLocalUri());
         sendDeleteRequestAndExpect(ip, expectedStatus, deleteRequest);
     }
 
     private void queryTrxAndExpect(Transaction transaction, ResultEnum expectedResult, String... expectedMessageWords) {
-        HttpRequest getRequest = get(TRX_ADDRESS);
+        final String trxJson = toJson(transaction);
+        HttpRequest getRequest = post(TRX_ADDRESS, trxJson);
         HttpResponse response = getRequest.send();
         TransactionResponse transactionResponse = fromJson(response, TransactionResponse.class);
 
@@ -296,8 +339,8 @@ public class AntifraudTest extends SpringTest {
         int expectedCode = expectedStatus.value();
         int receivedCode = httpResponse.getStatusCode();
         if (receivedCode != expectedCode) {
-            String feedback = String.format("Expected status %d after adding item %s but received status %d",
-                    expectedCode, serialNumber, receivedCode);
+            String feedback = String.format("Expected status %d after adding item %s but received status %d for request:\n%s",
+                    expectedCode, serialNumber, receivedCode, postRequest.getUri());
             throw new UnexpectedResultException(CheckResult.wrong(feedback));
         }
     }
@@ -320,7 +363,6 @@ public class AntifraudTest extends SpringTest {
             throw new UnexpectedResultException(CheckResult.wrong(feedback));
         }
     }
-
 
 
     private CheckResult runtTestScenario(Runnable testScenario) {
@@ -359,5 +401,13 @@ public class AntifraudTest extends SpringTest {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void log(String message, Object... args) {
+        String param = message;
+        for (Object arg : args) {
+            param = param.replaceFirst("\\{}", arg.toString());
+        }
+        System.out.println(param);
     }
 }
