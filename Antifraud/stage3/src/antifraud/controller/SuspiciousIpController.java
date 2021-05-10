@@ -2,6 +2,7 @@ package antifraud.controller;
 
 import antifraud.service.SuspiciousIpService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +23,10 @@ public class SuspiciousIpController {
     @PostMapping
     public ResponseEntity<Object> add(@RequestParam String ip) {
         ipService.add(ip);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{ip}")
     public ResponseEntity<Object> delete(@PathVariable String ip) {
         ipService.delete(ip);
         return ResponseEntity.ok().build();

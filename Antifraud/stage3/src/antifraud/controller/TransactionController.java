@@ -14,7 +14,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @GetMapping
+    @PostMapping
     ResponseEntity<TransactionResponse> isTransactionValid(@RequestBody Transaction transaction) {
         return ResponseEntity.ok(transactionService.getTransactionValidity(transaction));
     }

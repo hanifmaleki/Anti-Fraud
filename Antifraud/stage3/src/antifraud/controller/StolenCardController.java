@@ -27,7 +27,7 @@ public class StolenCardController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{serialNumber}")
     public ResponseEntity<Object> delete(@PathVariable String serialNumber) {
         cardService.delete(serialNumber);
         return ResponseEntity.ok().build();
