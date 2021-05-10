@@ -1,15 +1,8 @@
 <h2>Description</h2>
 
-<p>
-    Normally hackers use specific IP-addresses. As a result you should be cautious about activities on such a network
-    address.
-    In addition, some card numbers are reported as stolen.
-    The anti-fraud system should prohibit any transaction of the stolen cards.</p>
+<p>Normally hackers use specific IP addresses. As a result, you should be cautious about activities on such a network address. In addition, some card numbers are reported as stolen. The anti-fraud system should prohibit any transaction of the stolen cards.</p>
 
-<p>
-    In this stage, the anti-fraud system would be enabled to get a list of prohibited card numbers as well as suspicious
-    IP address and banned them from doing transactions.
-</p>
+<p>In this stage, the anti-fraud system would be enabled to get a list of prohibited card numbers as well as suspicious IP addresses and banned them from doing transactions.</p>
 
 <h2>Objectives</h2>
 
@@ -18,49 +11,28 @@
 <ol>
     <li>Add a rest controller for suspicious IP address
         <ul>
-            <li>
-                get a list <code>GET /antifraud/suspicious-ip</code> returning HTTP status code<strong><code>200
-                OK</code></strong>
-            </li>
-            <li>
-                add an item to the list <code>POST /antifraud/suspicious-ip</code> having a <em>request-param</em>
-                <code>ip</code> returning HTTP status code <strong><code>201 Created </code></strong> for successful add
-                or HTTP status code <code><strong>409 Conflict</strong></code> if it is already exist.
-            </li>
-            <li>
-                remove an item from the list of suspicious IPs <code>DELETE /antifraud/suspicious-ip/{ip}</code> having
-                a <em>path-param</em> <code>ip</code> returning HTTP status code<strong><code>200 OK</code></strong> if
-                it is successful or HTTP <code><strong>404 Not Found</strong></code> if such a card does not exist.
-            </li>
+            <li>get a list <code>GET /antifraud/suspicious-ip</code> returning HTTP status code<strong><code>200 OK</code></strong></li>
+            <li>add an item to the list <code>POST /antifraud/suspicious-ip</code> having a <em>request-param</em> <code>ip</code> returning HTTP status code <strong><code>201 Created </code></strong> for successful add or HTTP status code <code><strong>409 Conflict</strong></code> if it already exists.</li>
+            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/suspicious-ip/{ip}</code> having a <em>path-param</em> <code>ip</code> returning HTTP status code<strong><code>200 OK</code></strong> if it is successful or HTTP <code><strong>404 Not Found</strong></code> if such a card does not exist.</li>
         </ul>
     </li>
     <li>
         <p>Add a rest controller for the Stolen cards</p>
 
         <ul>
-            <li>
-                get a list <code>GET /antifraud/stolencard</code> returning HTTP status code<strong><code>200 OK</code></strong>
-            </li>
-            <li>
-                add an item to the list <code>POST /antifraud/stolencard</code> having a <em>request-param</em>
-                <code>serial</code> returning HTTP status code <strong><code>201 Created </code></strong> for successful
-                add or HTTP status code <code><strong>409 Conflict</strong></code> if it is already exist.
-            </li>
-            <li>
-                remove an item from the list of suspicious IPs <code>DELETE /antifraud/stolen/{serial}</code> having
-                a <em>path-param</em> <code>serial</code> returning HTTP status code<strong><code>200 OK</code></strong>
-                if it is successful or HTTP <code><strong>404 Not Found</strong></code> if such a card does not exist.
-            </li>
+            <li>get a list <code>GET /antifraud/stolencard</code> returning HTTP status code<strong><code>200 OK</code></strong></li>
+            <li>add an item to the list <code>POST /antifraud/stolencard</code> having a <em>request-param</em> <code>serial</code> returning HTTP status code <strong><code>201 Created </code></strong> for successful add or HTTP status code <code><strong>409 Conflict</strong></code> if it already exists.</li>
+            <li>remove an item from the list of suspicious IPs <code>DELETE /antifraud/stolen/{serial}</code> having a <em>path-param</em> <code>serial</code> returning HTTP status code<strong><code>200 OK</code></strong> if it is successful or HTTP <code><strong>404 Not Found</strong></code> if such a card does not exist.</li>
         </ul>
     </li>
     <li>
-        <p>Improve the transaction check </p>
+        <p>Improve the transaction check</p>
+
         <ul>
             <li>Method type is <code>POST</code>.</li>
-            <li>Enhance a transaction to be an object which send as <em>request-bod</em> with two fields
-                <em>ip-address</em>
-                and <em>card-number</em>
-                <pre><code class="language-json">
+            <li>Enhance a transaction to be an object which sends as <em>request-bod</em> with two fields <em>IP-address</em> and <em>card-number</em>
+                <pre>
+<code class="language-json">
                     {
                         "amount": 159,
                         "ip-adress": "127.0.0.1",
@@ -68,35 +40,15 @@
                     }
                 </code></pre>
             </li>
-            <li> Enrich the fraud detection method <code> POST {{antifraud-host}}/api/antifraud/ </code> to prohibit any
-                transaction of the stolen cards as well as suspicious IP addresses.
-                If the transaction is not from suspicious IP or stolen card.
-            </li>
-            <li>
-                Enrich the response body of the <code> POST {{antifraud-host}}/api/antifraud/ </code> with a property
-                <em>message</em> which has the following value:
+            <li>Enrich the fraud detection method <code> POST {{antifraud-host}}/api/antifraud/ </code> to prohibit any transaction of the stolen cards as well as suspicious IP addresses. If the transaction is not from suspicious IP or stolen card.</li>
+            <li>Enrich the response body of the <code> POST {{antifraud-host}}/api/antifraud/ </code> with a property <em>message</em> which has the following value:
                 <ul>
-                    <li>
-                        <code>The transaction is allowed.</code> in case of <em>ALLOWED</em> transaction
-                    </li>
-                    <li>
-                        In case of <em>MANUAL_PROCESSING</em> the message would be <code> The transactions with this
-                        price
-                        needs to be confirmed manually.</code></li>
-                    <li>
-                        In case of <em>PROHIBITED</em> because of the price of transaction the message should contain
-                        <code> The transaction is above allowed value. </code>
-                    </li>
-                    <li>
-                        In cse of <em>PROHIBITED</em> because of the stolen card the message contains <code>The
-                        given card is in the blacklist</code></li>
-                    <li>
-                        In cse of <em>PROHIBITED</em> because of the prohibited IP address it the message contains
-                        <code>The given IP address is suspicious.</code></li>
-                    <li>
-                        If a transaction is <em>PROHIBITED</em> and more than one of the reason can be applied on it
-                        the message would contains all of the reasons.
-                    </li>
+                    <li><code>The transaction is allowed.</code> in case of <em>ALLOWED</em> transaction</li>
+                    <li>In the case of <em>MANUAL_PROCESSING,</em> the message would be <code> The transactions with this price needs to be confirmed manually.</code></li>
+                    <li>In the case of <em>PROHIBITED</em> because of the amount of the transaction, the message should contain <code> The transaction is above allowed value. </code></li>
+                    <li>In the case of <em>PROHIBITED</em> because of the stolen card, the message contains <code>The given card is in the blacklist</code></li>
+                    <li>In the case of <em>PROHIBITED</em> because of the prohibited IP address it the message contains <code>The given IP address is suspicious.</code></li>
+                    <li>If a transaction is <em>PROHIBITED</em> because of more than one&nbsp;reason,&nbsp; the message would contain&nbsp;all of the reasons separating with a <code>return </code>character.</li>
                 </ul>
             </li>
         </ul>
@@ -104,7 +56,9 @@
 </ol>
 
 <h2>Examples</h2>
+
 <h3>Sample of the data structures</h3>
+
 <pre>
 <code class="language-json">
                     {
@@ -130,26 +84,16 @@
     </li>
     <li>ask for prohibited IP
         <p><img alt="" src="https://ucarecdn.com/bda1c210-4e16-493b-a0fd-6dbba5e8b052/" /></p>
-
-        <ol>
-            <li>Check rest parameter types not to be misleading or bad design</li>
-            <li>Think about having search for cards and IPs</li>
-            <li>The DataType for IP address in java is InetAddress. Think about either type to be that or explaining it somewhere. <a href="https://stackoverflow.com/questions/11319445/java-to-jackson-json-serialization-money-fields" rel="noopener noreferrer nofollow">Here</a> you can find how to serialize BigDecimal</li>
-        </ol>
     </li>
 </ol>
 
-
 <h3>TODO</h3>
+
 <ol>
-    <li>Check validation of IP adresses(v4) by regular expressions</li>
+    <li>Check validation of IP addresses(v4) by regular expressions</li>
     <li>Check rest parameter types not to be misleading or bad design</li>
-    <li>Think about having search for cards and IPs</li>
-    <li>The DataType for IP address in java is InetAddress. Think about either type to be that or explaining it
-        somewhere. <a
-                href="https://stackoverflow.com/questions/11319445/java-to-jackson-json-serialization-money-fields">Here</a>
-        you can find how to serialize BigDecimal
-    </li>
-    <li>Add the word "counterfeit" card</li>
-    <li>Explain future work of adding pagination / sorting / filter</li>
+    <li>Think about having a search for cards and IPs</li>
+    <li>The DataType for IP address in java is InetAddress. Think about either type to be that or explaining it somewhere. <a href="https://stackoverflow.com/questions/11319445/java-to-jackson-json-serialization-money-fields" rel="noopener noreferrer nofollow">Here</a> you can find how to serialize BigDecimal</li>
+    <li>Add the word &quot;counterfeit&quot; card</li>
+    <li>Explain future work of adding pagination/sorting / filter</li>
 </ol>
