@@ -11,14 +11,11 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
-public class UserTestUtil {
-
-    private final SpringTest testClass;
-
+public class UserTestUtil extends BaseTestUtil {
     public UserTestUtil(SpringTest testClass) {
-        this.testClass = testClass;
+        super(testClass);
     }
-    
+
 
       /* private void checkUserExistingList(List<User> users, User user) {
         User receivedUser = users.stream().filter(user::equals).findFirst().orElseThrow(() -> {
@@ -64,7 +61,7 @@ public class UserTestUtil {
 
     private HttpResponse addUser(User user) {
 //        String user1Json = gson.toJson(user1);
-        String user1Json = TestUtil.toJson(user);
+        String user1Json = toJson(user);
         HttpRequest httpRequest = testClass.post(TestDataProvider.USER_ADDRESS, user1Json);
         return httpRequest.send();
     }
@@ -101,7 +98,7 @@ public class UserTestUtil {
         }
 
 //        List<User> users = Arrays.asList(gson.fromJson(response.getContent(), User[].class));
-        List<User> users = Arrays.asList(TestUtil.fromJson(response, User[].class));
+        List<User> users = Arrays.asList(fromJson(response, User[].class));
 
         if (expectedSize != null) {
             int size = users.size();
