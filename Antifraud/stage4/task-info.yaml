@@ -16,9 +16,15 @@ files:
   visible: false
 - name: test/UserTestUtil.java
   visible: false
-- name: test/TestUtil.java
-  visible: false
 - name: test/UnexpectedResultException.java
   visible: false
 - name: test/TestDataProvider.java
+  visible: false
+- name: test/AntifraudBaseTest.java
+  visible: false
+- name: test/CardAndIPTestUtil.java
+  visible: false
+- name: test/TransactionTestUtil.java
+  visible: false
+- name: test/BaseTestUtil.java
   visible: false

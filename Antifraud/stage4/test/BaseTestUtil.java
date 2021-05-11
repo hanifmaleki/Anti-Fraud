@@ -1,12 +1,21 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
+import org.hyperskill.hstest.stage.SpringTest;
 
-public class TestUtil {
+public class BaseTestUtil {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    protected final SpringTest testClass;
 
-    public static String toJson(Object onject) {
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    public BaseTestUtil(SpringTest testClass) {
+        this.testClass = testClass;
+    }
+
+
+
+    public String toJson(Object onject) {
         try {
             return objectMapper.writeValueAsString(onject);
         } catch (JsonProcessingException e) {
@@ -14,7 +23,7 @@ public class TestUtil {
         }
     }
 
-    public static <T> T fromJson(HttpResponse response, Class<T> clazz) {
+    public <T> T fromJson(HttpResponse response, Class<T> clazz) {
         try {
             T object = objectMapper.readValue(response.getContent(), clazz);
             return object;
