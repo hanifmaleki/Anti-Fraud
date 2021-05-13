@@ -34,8 +34,8 @@ public class UserController {
         return null;
     }
 
-    @PatchMapping("/username")
-    public ResponseEntity<User> cheangePassword(@RequestBody String password) {
+    @PutMapping("/username")
+    public ResponseEntity<User> changePassword(@RequestBody String password) {
         return null;
     }
 
