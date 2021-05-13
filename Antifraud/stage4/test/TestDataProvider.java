@@ -11,8 +11,11 @@ public class TestDataProvider {
     public static final String USER_ADDRESS = BASE_ADDRESS + "/user";
 
     // Users
-    public final User user1;
-    public final User user2;
+    public final User adminUser0;
+    public final User adminUser1;
+    public final User supportUser1;
+    public final User basicUser1;
+    public final User basicUser2;
     public final User userWithoutRole;
     public final User userWithoutName;
     public final User userWithoutUsername;
@@ -30,42 +33,72 @@ public class TestDataProvider {
 
     //Transactions
     public final Transaction trxAllowed;
-    public final Transaction trxManuall;
+    public final Transaction trxManually;
     public final Transaction trxProhibited1;
     public final Transaction trxProhibited2;
     public final Transaction trxProhibited3;
 
     public TestDataProvider() {
-        user1 = User
+        adminUser0 = User
+                .builder()
+                .name("Admin")
+                .username("admin")
+                .role(Role.ADMIN)
+                .password("jk~7K<cGhTFY(<Q*")
+                .build();
+
+        adminUser1 = User
                 .builder()
                 .name("John Doe")
                 .username("john_doe")
-                .role(Role.USER)
+                .role(Role.ADMIN)
+                .password("P4ssw0rd")
                 .build();
 
-        user2 = User
+        supportUser1 = User
+                .builder()
+                .name("Mr. Taxpayer")
+                .username("tax_payer")
+                .role(Role.USER)
+                .password("To8e0rNotTo8e")
+                .build();
+
+
+        basicUser1 = User
                 .builder()
                 .name("Richard Roe")
                 .username("richard_roe")
-                .role(Role.ADMIN)
+                .role(Role.USER)
+                .password("_vvsH&d$4K")
+                .build();
+
+        basicUser2 = User
+                .builder()
+                .name("Joe Public")
+                .username("public_joe")
+                .role(Role.USER)
+                .password("!PFd,52DyB")
                 .build();
 
         userWithoutRole = User
                 .builder()
-                .name("John Doe")
-                .username("john_doe")
+                .name("Joe Doakes")
+                .username("joe_doakes")
+                .password("LoveSummer2012")
                 .build();
 
         userWithoutName = User
                 .builder()
                 .username("john_doe")
                 .role(Role.USER)
+                .password("Vn8D:_fTMN")
                 .build();
 
         userWithoutUsername = User
                 .builder()
                 .username("john_doe")
                 .role(Role.USER)
+                .password("bL57!s^H%+")
                 .build();
 
 
@@ -83,7 +116,7 @@ public class TestDataProvider {
                 .cardSerial(okCard)
                 .build();
 
-        trxManuall = Transaction
+        trxManually = Transaction
                 .builder()
                 .amount(400)
                 .ipAddress(okIp)

@@ -1,33 +1,14 @@
 import antifraud.AntifraudApplication;
-import antifraud.model.User;
 import org.hyperskill.hstest.dynamic.DynamicTest;
 import org.hyperskill.hstest.testcase.CheckResult;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class AntifraudTest extends AntifraudBaseTest {
 
     private final TestDataProvider data = new TestDataProvider();
-    private final UserTestUtil userUtil = new UserTestUtil(this);
     private final TransactionTestUtil transactionUtil = new TransactionTestUtil(this);
-    private final CardAndIPTestUtil carIpUtil = new CardAndIPTestUtil(this);
-
-    private List<String> priviledges = Arrays.asList("own_modify", "trx_query",
-            "card_management", "ip_management",
-            "user_management");
-
-    enum Privilege {
-        OWN_MODIFY,
-        TRX_QUERY,
-        CARD_MANAGEMENT,
-        IP_MANAGEMENT,
-        USER_MANAGEMENT;
-
-        public static List<Privilege> ADMIN_PRIVILEGES = Arrays.asList(OWN_MODIFY, TRX_QUERY, CARD_MANAGEMENT, IP_MANAGEMENT, USER_MANAGEMENT);
-        public static List<Privilege> SUPPORT_PRIVILEGES = Arrays.asList(OWN_MODIFY, TRX_QUERY, CARD_MANAGEMENT, IP_MANAGEMENT);
-        public static List<Privilege> BASIC_PRIVILEGES = Arrays.asList(OWN_MODIFY, TRX_QUERY);
-    }
+    private final CardAndIPTestUtil cardIpUtil = new CardAndIPTestUtil(this);
+    private final UserTestUtil userUtil = new UserTestUtil(this);
+    private final AuthorizationTestUtil authorizationUtil = new AuthorizationTestUtil(this, data.adminUser0, cardIpUtil, transactionUtil, userUtil);
 
 
     public AntifraudTest() {
@@ -115,10 +96,6 @@ public class AntifraudTest extends AntifraudBaseTest {
         // He can add stolen card
         // He can remove stolen card
         // He can not add a user
-    }
-
-    private void addUserCheckPriviledgesRemove(User user, List<Privilege> privileges) {
-
     }
 
 

@@ -5,14 +5,13 @@ import org.hyperskill.hstest.stage.SpringTest;
 
 public class BaseTestUtil {
 
-    protected final SpringTest testClass;
+    protected final AntifraudBaseTest testClass;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public BaseTestUtil(SpringTest testClass) {
+    public BaseTestUtil(AntifraudBaseTest testClass) {
         this.testClass = testClass;
     }
-
 
 
     public String toJson(Object onject) {
