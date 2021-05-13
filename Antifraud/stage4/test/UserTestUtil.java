@@ -1,25 +1,25 @@
 import antifraud.model.User;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
-import org.hyperskill.hstest.stage.SpringTest;
 import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 public class UserTestUtil extends BaseTestUtil {
-    public UserTestUtil(SpringTest testClass) {
+
+    public UserTestUtil(AntifraudBaseTest testClass) {
         super(testClass);
     }
 
-
-      /* private void checkUserExistingList(List<User> users, User user) {
+    public void checkUserExistingList(List<User> users, User user) {
         User receivedUser = users.stream().filter(user::equals).findFirst().orElseThrow(() -> {
-            String feedback = String.format("The expected user %s does nt exist in the received list", user1);
+            String feedback = String.format("The expected user %s does nt exist in the received list", user);
             return new UnexpectedResultException(CheckResult.wrong(feedback));
         });
 
@@ -36,9 +36,9 @@ public class UserTestUtil extends BaseTestUtil {
             );
             throw new UnexpectedResultException(CheckResult.wrong(feedback));
         }
-    }*/
+    }
 
-    private void deleteExistingUser(String username) {
+    public void deleteExistingUser(String username) {
         HttpRequest delete = testClass.delete(TestDataProvider.USER_ADDRESS + "/" + username);
         HttpResponse response = delete.send();
         if (response.getStatusCode() != OK.value()) {
@@ -47,7 +47,7 @@ public class UserTestUtil extends BaseTestUtil {
         }
     }
 
-    private void deleteNonExistingUser(String username) {
+    public void deleteNonExistingUser(String username) {
         HttpRequest delete = testClass.delete(TestDataProvider.USER_ADDRESS + "/" + username);
         HttpResponse response = delete.send();
         int statusCode = response.getStatusCode();
@@ -59,14 +59,7 @@ public class UserTestUtil extends BaseTestUtil {
         }
     }
 
-    private HttpResponse addUser(User user) {
-//        String user1Json = gson.toJson(user1);
-        String user1Json = toJson(user);
-        HttpRequest httpRequest = testClass.post(TestDataProvider.USER_ADDRESS, user1Json);
-        return httpRequest.send();
-    }
-
-    private void addUserAndExceptStatus(User user, HttpStatus httpStatus) {
+    public void addUserAndExceptStatus(User user, HttpStatus httpStatus) {
         // Add User
         HttpResponse response = this.addUser(user);
         // Except httpStatus
@@ -81,11 +74,27 @@ public class UserTestUtil extends BaseTestUtil {
         }
     }
 
-    private List<User> getUsers() {
-        return this.getUsersAndExpectSize(null);
+    public boolean isAuthorizedChangeOwnPassword(Map<String, String> authParameters) {
+        //TODO complete it
+        //TODO make constant for auth  header parameters
+        String address = String.format("%s/%s", TestDataProvider.USER_ADDRESS, authParameters.get("user"));
+        final HttpRequest httpRequest = testClass.put(address, authParameters)
+                .setContent("newPassword");
+        final HttpResponse response = httpRequest.send();
+        final int statusCode = response.getStatusCode();
+        if (statusCode == OK.value()) {
+            return true;
+        }
+
+        if (statusCode == HttpStatus.UNAUTHORIZED.value()) {
+            return false;
+        }
+
+        String feedback = String.format("Could not change the password. The receiving HTTP code is %d", statusCode);
+        throw new UnexpectedResultException(CheckResult.wrong(feedback));
     }
 
-    private List<User> getUsersAndExpectSize(Integer expectedSize) {
+    public List<User> getUsersAndExpectSize(Integer expectedSize) {
         HttpRequest httpRequest = testClass.get(TestDataProvider.USER_ADDRESS);
         HttpResponse response = httpRequest.send();
 
@@ -110,6 +119,16 @@ public class UserTestUtil extends BaseTestUtil {
         }
 
         return users;
+    }
+
+    private HttpResponse addUser(User user) {
+        String user1Json = toJson(user);
+        HttpRequest httpRequest = testClass.post(TestDataProvider.USER_ADDRESS, user1Json);
+        return httpRequest.send();
+    }
+
+    private List<User> getUsers() {
+        return this.getUsersAndExpectSize(null);
     }
 
 
