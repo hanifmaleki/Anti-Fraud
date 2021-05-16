@@ -1,7 +1,16 @@
+import antifraud.model.User;
+import org.assertj.swing.junit.dependency.commons_codec.binary.Base64;
 import org.hyperskill.hstest.stage.SpringTest;
 import org.hyperskill.hstest.testcase.CheckResult;
 
-public class AntifraudBaseTest extends SpringTest {
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class AntifraudBaseTest extends SpringTest {
+
+
     public AntifraudBaseTest(Class<?> clazz) {
         super(clazz);
     }
@@ -34,5 +43,23 @@ public class AntifraudBaseTest extends SpringTest {
             param = param.replaceFirst("\\{}", arg.toString());
         }
         System.out.println(param);
+    }
+
+
+    public Map<String, String> getAuthorizationHeader(User user) {
+        String auth = user.getUsername() + ":" + user.getPassword();
+        byte[] encodedAuth = Base64.encodeBase64(
+                auth.getBytes(StandardCharsets.US_ASCII));
+        String authHeader = "Basic " + new String(encodedAuth);
+
+        Map<String, String> authParameter = new HashMap<>();
+        authParameter.put("Authorization", authHeader);
+        return authParameter;
+    }
+
+    public abstract User getDefaultAdmin();
+
+    public Map<String, String> getDefaultAdminAuthorization() {
+        return getAuthorizationHeader(getDefaultAdmin());
     }
 }

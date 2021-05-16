@@ -20,6 +20,13 @@ public class TestDataProvider {
     public final User userWithoutName;
     public final User userWithoutUsername;
 
+    // Passwords
+    public final String adminUser0HashedPassword;
+    public final String adminUser1HashedPassword;
+    public final String supportUser1HashedPassword;
+    public final String basicUser1HashedPassword;
+    public final String basicUser2HashedPassword;
+
 
     // Cards
     public final String stolenCard1;
@@ -46,6 +53,7 @@ public class TestDataProvider {
                 .role(Role.ADMIN)
                 .password("jk~7K<cGhTFY(<Q*")
                 .build();
+        adminUser0HashedPassword = "2d34981e7027c199b6e1c47d1bf4cf8e";
 
         adminUser1 = User
                 .builder()
@@ -54,6 +62,8 @@ public class TestDataProvider {
                 .role(Role.ADMIN)
                 .password("P4ssw0rd")
                 .build();
+        adminUser1HashedPassword="8efe310f9ab3efeae8d410a8e0166eb2";
+
 
         supportUser1 = User
                 .builder()
@@ -62,6 +72,7 @@ public class TestDataProvider {
                 .role(Role.USER)
                 .password("To8e0rNotTo8e")
                 .build();
+        supportUser1HashedPassword="262e81e11f0bcfb860870db336fc2f93";
 
 
         basicUser1 = User
@@ -71,6 +82,8 @@ public class TestDataProvider {
                 .role(Role.USER)
                 .password("_vvsH&d$4K")
                 .build();
+        basicUser1HashedPassword="faab1c190c8e7c78d580eaa178dd3b25";
+
 
         basicUser2 = User
                 .builder()
@@ -79,6 +92,8 @@ public class TestDataProvider {
                 .role(Role.USER)
                 .password("!PFd,52DyB")
                 .build();
+        basicUser2HashedPassword="d535c0e2c4d07c502b7a216a4d0d0ab1";
+
 
         userWithoutRole = User
                 .builder()

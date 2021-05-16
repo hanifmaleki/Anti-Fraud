@@ -1,6 +1,8 @@
+import antifraud.model.ResultEnum;
 import antifraud.model.Role;
 import antifraud.model.User;
 import org.hyperskill.hstest.testcase.CheckResult;
+import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,21 +10,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.springframework.http.HttpStatus.OK;
-
 public class AuthorizationTestUtil extends BaseTestUtil {
 
     private final CardAndIPTestUtil cardUtil;
     private final TransactionTestUtil transactionUtil;
     private final UserTestUtil userUtil;
-    private final Map<Privilege, Function<Map<String, String>, Boolean>> privilegeMethodsMap = new HashMap<>();
+    private final TestDataProvider data;
+    private final Map<Privilege, Function<User, Boolean>> privilegeMethodsMap = new HashMap<>();
 
-    public AuthorizationTestUtil(AntifraudBaseTest testClass, User admin0, CardAndIPTestUtil cardUtil, TransactionTestUtil transactionUtil, UserTestUtil userUtil) {
+    public AuthorizationTestUtil(AntifraudBaseTest testClass, CardAndIPTestUtil cardUtil, TransactionTestUtil transactionUtil, UserTestUtil userUtil, TestDataProvider data) {
         super(testClass);
         this.cardUtil = cardUtil;
         this.transactionUtil = transactionUtil;
         this.userUtil = userUtil;
-        userUtil.addUserAndExceptStatus(admin0, OK);
+        this.data = data;
+
+        privilegeMethodsMap.put(Privilege.OWN_MODIFY, userUtil::isAuthorizedChangeOwnPassword);
+        privilegeMethodsMap.put(Privilege.TRX_QUERY, this::isAuthorizedTrx);
+        privilegeMethodsMap.put(Privilege.CARD_MANAGEMENT, cardUtil::isAuthorizedCardGet);
+        privilegeMethodsMap.put(Privilege.IP_MANAGEMENT, cardUtil::isAuthorizedIpGet);
+        privilegeMethodsMap.put(Privilege.USER_MANAGEMENT, this::isAuthorizedUserMgt);
     }
 
     enum Privilege {
@@ -53,9 +60,23 @@ public class AuthorizationTestUtil extends BaseTestUtil {
 
 
     public void checkAuthorizations(User user) {
-        testClass.log("Checking authorizanios of the user {}", user);
+        testClass.log("Checking authorizations of the user {}", user);
         final List<Privilege> privileges = Privilege.getPrivileges(user.getRole());
         checkAuthorizations(user, privileges);
+    }
+
+    public void checkAuthentication(User user) {
+        testClass.log("Check authentication for user {}", user.getUsername());
+        // Add user
+        userUtil.addUserAndExceptStatus(testClass.getDefaultAdmin(), user, HttpStatus.CREATED);
+        // get trx with correct user
+        transactionUtil.queryTrxAndExpectResultEnum(user, data.trxAllowed, ResultEnum.ALLOWED);
+        // get trx with wrong password and except 401
+        transactionUtil.queryTrxAndExpectUnauthorizedHttpStatus(data.adminUser1, data.trxAllowed);
+
+        userUtil.deleteExistingUser(testClass.getDefaultAdmin(), user.getUsername());
+
+        testClass.log("Authentication test has been done succesfully for user {}", user);
     }
 
     private void checkAuthorizations(User user, List<Privilege> privileges) {
@@ -66,19 +87,19 @@ public class AuthorizationTestUtil extends BaseTestUtil {
         // There is no need to check it
         testClass.log("Check user exist in the list of users");
 
-        Privilege.ALL_PRIVILEGES.stream()
+        Privilege.ALL_PRIVILEGES
                 .forEach(pr -> this.checkPrivilegeForUserAndExpect(user, pr, privileges.contains(pr)));
 
         // delete users with adminUser
-        userUtil.deleteExistingUser(user.getUsername());
+        userUtil.deleteExistingUser(testClass.getDefaultAdmin(), user.getUsername());
 
     }
 
     private void checkPrivilegeForUserAndExpect(User user, Privilege privilege, boolean expected) {
         testClass.log("Check privilege {} for user {}=> expected: {} ", expected);
-        final Function<Map<String, String>, Boolean> function = privilegeMethodsMap.get(privilege);
+        final Function<User, Boolean> function = privilegeMethodsMap.get(privilege);
 
-        final Boolean received = function.apply(getAuthorizationParameter(user));
+        final Boolean received = function.apply(user);
 
         if (received != expected) {
             String feedback = String.format("User with role %s access to privilege %s. expected: %b___ received %b",
@@ -87,11 +108,13 @@ public class AuthorizationTestUtil extends BaseTestUtil {
         }
     }
 
-    private Map<String, String> getAuthorizationParameter(User user) {
-        Map<String, String> authParameter = new HashMap<>();
-        authParameter.put("user", user.getUsername());
-        authParameter.put("password", user.getPassword());
-        return authParameter;
+    private Boolean isAuthorizedUserMgt(User user) {
+        return userUtil.isAuthorizedPasswordChange(user, testClass.getDefaultAdmin());
+    }
+
+
+    private Boolean isAuthorizedTrx(User user) {
+        return transactionUtil.isUserAuthorizedForTrxQuery(user, data.trxAllowed);
     }
 
 

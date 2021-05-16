@@ -1,6 +1,6 @@
+import antifraud.model.User;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
-import org.hyperskill.hstest.stage.SpringTest;
 import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
 
@@ -14,7 +14,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class CardAndIPTestUtil extends BaseTestUtil {
 
 
-    public CardAndIPTestUtil(SpringTest testClass) {
+    public CardAndIPTestUtil(AntifraudBaseTest testClass) {
         super(testClass);
     }
 
@@ -26,33 +26,67 @@ public class CardAndIPTestUtil extends BaseTestUtil {
     }
 
 
-    private List<String> getStolenCardsAndExpectSize(int expectedSize) {
-        HttpRequest getRequest = testClass.get(TestDataProvider.STOLEN_ADDRESS);
+    public List<String> getStolenCardsAndExpectSize(int expectedSize) {
+        HttpRequest getRequest = testClass.get(TestDataProvider.STOLEN_ADDRESS)
+                .addHeaders(testClass.getDefaultAdminAuthorization());
         return getListOfStringWithExpectedSize(expectedSize, getRequest);
     }
 
-    private void deleteCardAndExpect(String serialNumber, HttpStatus expectedStatus) {
-        HttpRequest deleteRequest = testClass.delete(TestDataProvider.STOLEN_ADDRESS + "/" + serialNumber);
+    public void deleteCardAndExpect(User user, String serialNumber, HttpStatus expectedStatus) {
+        HttpRequest deleteRequest = testClass.delete(TestDataProvider.STOLEN_ADDRESS + "/" + serialNumber)
+                .addHeaders(testClass.getAuthorizationHeader(user));
         sendDeleteRequestAndExpect(serialNumber, expectedStatus, deleteRequest);
 
     }
 
-    private void addSuspiciousIpAndExpectStatus(String ip, HttpStatus expectedStatus) {
+    public boolean isAuthorizedCardGet(User user){
+        HttpRequest getRequest = testClass.get(TestDataProvider.STOLEN_ADDRESS)
+                .addHeaders(testClass.getAuthorizationHeader(user));
+        final HttpResponse response = getRequest.send();
+        final int responseCode = response.getStatusCode();
+        if(responseCode == HttpStatus.UNAUTHORIZED.value()){
+            return false;
+        }
+        if(responseCode == HttpStatus.OK.value()){
+            return true;
+        }
+        final String feedback = String.format("Unexpected status %s received from get cards call", response);
+        throw new UnexpectedResultException(CheckResult.wrong(feedback));
+    }
+
+    public void addSuspiciousIpAndExpectStatus(User user, String ip, HttpStatus expectedStatus) {
         Map<String, String> params = new HashMap<>();
         params.put("ip", ip);
-        HttpRequest postRequest = testClass.post(TestDataProvider.IP_ADDRESS, params);
+        HttpRequest postRequest = testClass.post(TestDataProvider.IP_ADDRESS, params)
+                .addHeaders(testClass.getAuthorizationHeader(user));
         sendPostRequestAndExpect(ip, expectedStatus, postRequest);
     }
 
-    private List<String> getSuspiciousIpsAndExpectSize(int expectedSize) {
-        HttpRequest getRequest = testClass.get(TestDataProvider.IP_ADDRESS);
+    public List<String> getSuspiciousIpsAndExpectSize(int expectedSize) {
+        HttpRequest getRequest = testClass.get(TestDataProvider.IP_ADDRESS)
+                .addHeaders(testClass.getDefaultAdminAuthorization());
         return getListOfStringWithExpectedSize(expectedSize, getRequest);
     }
 
-    private void deleteSuspiciousIpAndExpect(String ip, HttpStatus expectedStatus) {
-        HttpRequest deleteRequest = testClass.delete(TestDataProvider.IP_ADDRESS + "/" + ip);
-        System.out.println(deleteRequest.getLocalUri());
+    public void deleteSuspiciousIpAndExpect(User user, String ip, HttpStatus expectedStatus) {
+        HttpRequest deleteRequest = testClass.delete(TestDataProvider.IP_ADDRESS + "/" + ip)
+                .addHeaders(testClass.getAuthorizationHeader(user));
         sendDeleteRequestAndExpect(ip, expectedStatus, deleteRequest);
+    }
+
+    public boolean isAuthorizedIpGet(User user){
+        HttpRequest getRequest = testClass.get(TestDataProvider.IP_ADDRESS)
+                .addHeaders(testClass.getAuthorizationHeader(user));
+        final HttpResponse response = getRequest.send();
+        final int responseCode = response.getStatusCode();
+        if(responseCode == HttpStatus.UNAUTHORIZED.value()){
+            return false;
+        }
+        if(responseCode == HttpStatus.OK.value()){
+            return true;
+        }
+        final String feedback = String.format("Unexpected status %s received from get IP call", response);
+        throw new UnexpectedResultException(CheckResult.wrong(feedback));
     }
 
     private List<String> getListOfStringWithExpectedSize(int expectedSize, HttpRequest getRequest) {

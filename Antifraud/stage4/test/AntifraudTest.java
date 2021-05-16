@@ -1,4 +1,5 @@
 import antifraud.AntifraudApplication;
+import antifraud.model.User;
 import org.hyperskill.hstest.dynamic.DynamicTest;
 import org.hyperskill.hstest.testcase.CheckResult;
 
@@ -8,95 +9,69 @@ public class AntifraudTest extends AntifraudBaseTest {
     private final TransactionTestUtil transactionUtil = new TransactionTestUtil(this);
     private final CardAndIPTestUtil cardIpUtil = new CardAndIPTestUtil(this);
     private final UserTestUtil userUtil = new UserTestUtil(this);
-    private final AuthorizationTestUtil authorizationUtil = new AuthorizationTestUtil(this, data.adminUser0, cardIpUtil, transactionUtil, userUtil);
+    private final AuthorizationTestUtil authorizationUtil = new AuthorizationTestUtil(this, cardIpUtil, transactionUtil, userUtil, data);
 
 
     public AntifraudTest() {
         super(AntifraudApplication.class);
+    }
 
+    @DynamicTest
+        // Check if defaultUser exist
+    CheckResult test1() {
+        return runtTestScenario(this::checkIfDefaultAdminAddedByDefault);
     }
 
     @DynamicTest
         // Test IP rest controller
-    CheckResult test1() {
-        return runtTestScenario(null);
+    CheckResult test2() {
+        return runtTestScenario(this::hashTest);
     }
 
     @DynamicTest
         // Adding incomplete users and expect 209
-    CheckResult test2() {
-        return runtTestScenario(null);
+    CheckResult test3() {
+        return runtTestScenario(this::checkAuthentication);
     }
 
 
     @DynamicTest
         // Delete non-existing user and except 404 NOT_FOUND
-    CheckResult test3() {
-        return runtTestScenario(null);
+    CheckResult test4() {
+        return runtTestScenario(this::checkAuthorisation);
+    }
+
+
+    private void checkIfDefaultAdminAddedByDefault() {
+        log("Check if default admin user has already added");
+        userUtil.getUsersAndExpectSize(0);
     }
 
 
     private void hashTest() {
-        //Add user-1
-        //Get users
-        //Check Hashed Password
-        //Remove user-1
-        //get empty user list
+        userUtil.checkHashingPassword(data.adminUser1, data.adminUser1HashedPassword);
 
-        //Add user-2
-        //Get Users
-        //Check hashed password
-        // Remove user-2
-        // Check empty user list
+        userUtil.checkHashingPassword(data.basicUser2, data.basicUser2HashedPassword);
     }
 
 
     // Just try trx query with all types of users
-    private void authentication() {
-        // Add adminUser1
-        // get trx with correct user
-        // get trx with wrong password and except 401
+    private void checkAuthentication() {
+        authorizationUtil.checkAuthentication(data.adminUser1);
+        authorizationUtil.checkAuthentication(data.supportUser1);
+        authorizationUtil.checkAuthentication(data.basicUser2);
 
-        // Add supportUser1
-        // get trx with correctUser1
-        // get trx with wrong password and except 401
-
-        // Add basicUser1
-        // get trx with correctUser1
-        // get trx with wrong password and except 401
-
-        // delete users with adminUser???
     }
 
-    private void aTestAuthorisationBasicUser() {
-        // Assume a basic user
-        // He can query trx
-        // He can change his password
-        // He can not change other users password
-        // He can not add stolen card
-        // He can not remove stolen card
-        // He can not add a user
-    }
-
-    private void supportUserAuthorizationTest() {
-        // Assume a support user
-        // He can query-trx
-        // He can change his password
-        // He can not change other users password
-        // He can add stolen card
-        // He can remove stolen card
-        // He can not add a user
-    }
-
-    private void adminAuthorizationTest() {
-        // Assume a support user
-        // He can query-trx
-        // He can change his password
-        // He can not change other users password
-        // He can add stolen card
-        // He can remove stolen card
-        // He can not add a user
+    private void checkAuthorisation() {
+        authorizationUtil.checkAuthorizations(data.adminUser1);
+        authorizationUtil.checkAuthorizations(data.supportUser1);
+        authorizationUtil.checkAuthorizations(data.basicUser2);
     }
 
 
+    @Override
+    public User getDefaultAdmin() {
+        return data.adminUser0;
+    }
 }

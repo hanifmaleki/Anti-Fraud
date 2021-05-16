@@ -1,7 +1,10 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
-import org.hyperskill.hstest.stage.SpringTest;
+
+import javax.xml.bind.DatatypeConverter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class BaseTestUtil {
 
@@ -24,10 +27,23 @@ public class BaseTestUtil {
 
     public <T> T fromJson(HttpResponse response, Class<T> clazz) {
         try {
-            T object = objectMapper.readValue(response.getContent(), clazz);
-            return object;
+            return objectMapper.readValue(response.getContent(), clazz);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    //TODO potential spoiler. remove it
+    public String hashPassword(String password){
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        md.update(password.getBytes());
+        byte[] digest = md.digest();
+        return DatatypeConverter
+                .printHexBinary(digest).toUpperCase();
     }
 }

@@ -10,8 +10,6 @@ files:
   visible: true
 - name: src/antifraud/model/Role.java
   visible: false
-- name: test/Tests.java
-  visible: false
 - name: src/antifraud/service/MD5encoder.java
   visible: false
 - name: test/UserTestUtil.java
