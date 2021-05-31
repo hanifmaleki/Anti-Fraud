@@ -1,51 +1,59 @@
 <html>
 <h2>Description</h2>
 <p>
-    An enterprise anti-fraud system has hundreds of users who take advantage of the system by only checking validity of
-    the transactions.
+    An enterprise anti-fraud system has hundreds of merchant users who take advantage of the system by only checking
+    validity of the transactions.
     Such kind of users do not need to modify and see list of stolen cards, suspicious IP addresses and even other users.
-    On the other hand there are very limited number of users eho are completely trusted by users and are allowed to
-    access and modify more sensitive data.
+    On the other hand there are limited number of support users who are responsible for reporting stolen cards/IPs and
+    excluding them from blacklist.
+    This type of users do not need to have access to the user management.
+    Finally, there are few users who are completely trusted and are allowed to access and modify more sensitive data.
 </p>
+<h2>Theory</h2>
 <p>
-    In this stage authentication and authorization is added to our antifraud-system ...
-    Authentication refers to the confirmation of user identity.
-    It should be done through a <code>password</code> field that should be sent with the username in each request ...
-
+    <h3> Authentication and Authorization</h3>
+    In this stage authentication and authorization is added to the antifraud-system.
+    Authentication refers to the confirmation of user identity by checking their PIN, password, fingerprint, or face.
+    On the other hand, authentication refers to the confirmation of an already authenticated user for an specific
+    activity in the system.
+    <h3>Encoding the Password</h3>
+    Here authentication is done through a <code>password</code> field that should be sent with the username in each
+    request.
+    The received password is compared with the user password in order to confirm user identity.
+    It is not good practice to maintain password inside the system as plain text...
+    What is hash function ... MD5 (for simplicity)
+    <h3> Basic Authentication Header</h3>
+    HEADER: "authorization": encode(basic: user+password)
 </p>
-<ol>
-    <li>
-    for this reason, it is necessary to define password for the users ...
-    </li>
-    <li>
-    Why not maintaining passwords as simple text
-    </li>
-    <li>
-        What is hash function ... MD5 (for simplicity)
-    </li>
-</ol>
+
+<h2>
+    Question: Is changing username allowed? Probable answer: only by the admin user? For simplicity NO
+</h2>
+
+<h2>Question: Add ID to the users and transaction??? What about other models</h2>
 
 <h2>Objectives</h2>
 
 <ol>
     <li>Enrich the User model by adding field <code>password</code> ...</li>
-    <li>Passwords are immediately encoded ...</li>
+    <li>Passwords are immediately encoded with ...</li>
     <li>Add an endpoint to user controller for changing password ...</li>
-    <li>Add a preconfigured admin user admin with password admin should be added by default.</li>
-    <li>Normal user can only do the following:
+    <li>Basic user can only do the following:
         <ul>
             <li>Change her/his password</li>
             <li>Ask for the validity of a transaction</li>
-            <li><strike>See the list of stolen cards</strike></li>
-            <li><strike>Add a stolen card</strike></li>
-            <li><strike>See the list of suspicious IPs</strike></li>
-            <li><strike>Add suspicious IPs</strike></li>
         </ul>
     </li>
-    <li>Updating/Adding/Removing other users, removing suspicious IP and stolen cards are only done by the admin
-        users.
+    <li>A support users can do whatever a basic user can do. In addition, the following are allowed for a support user
+        <ul>
+            <li>Stolen Card Management, i.e. get list, add, remove</li>
+            <li>Suspicious IP Management, i.e. get list, add, remove</li>
+        </ul>
     </li>
-    <li>Enrich fraud detection service to prohibit stolen cards and suspicious IPs</li>
+    <li>Updating/Adding/Removing users, are only done by the admin users.
+        In the other world admin users have access to every endpoint of the system.
+    </li>
+    <li>Add a preconfigured admin user admin with password admin should be added by default with username=admin, password=admin, and name=admin...</li>
 </ol>
 
 <h2>Examples</h2>

@@ -1,8 +1,12 @@
 package antifraud.controller;
 
 import antifraud.model.User;
+import antifraud.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -12,31 +16,34 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class UserController {
 
-//    private final UserService userService;
+    private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<Collection<User>> getAll() {
-//        return ResponseEntity.ok(userService.getAllUsers());
-        return null;
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<Collection<User>> getAll(/*@AuthenticationPrincipal User user*/) {
+        return ResponseEntity.ok(userService.getAllUsers());
+
     }
 
     @PostMapping
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> addUser(@RequestBody User user) {
-//        userService.addUser(user);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-        return null;
+        userService.addUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{username}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Object> deleteUser(@PathVariable String username) {
-//        userService.deleteUSer(username);
-//        return ResponseEntity.ok().build();
-        return null;
+        userService.deleteUSer(username);
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/username")
-    public ResponseEntity<User> changePassword(@RequestBody String password) {
-        return null;
+    @PutMapping("/{username}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') #username == authentication.principal.username")
+    public ResponseEntity<User> changePassword(@PathVariable String username, @RequestBody String password) {
+        User changedPasswordUser = userService.changePassword(username, password);
+        return ResponseEntity.ok(changedPasswordUser);
     }
 
 }

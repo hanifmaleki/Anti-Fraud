@@ -1,33 +1,29 @@
 package antifraud.controller;
 
 import antifraud.model.ResultEnum;
+import antifraud.model.Role;
 import antifraud.model.Transaction;
 import antifraud.model.TransactionResponse;
+import antifraud.service.TransactionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/antifraud/transaction")
+@Secured({"ROLE_SUPPORT", "ROLE_ADMIN", "ROLE_USER"})
+@RequiredArgsConstructor
 public class TransactionController {
 
-    @GetMapping
+    private final TransactionService transactionService;
+
+    @PostMapping
     ResponseEntity<TransactionResponse> isTransactionValid(@RequestBody Transaction transaction) {
-        int amount = transaction.getAmount();
-
-        ResultEnum result;
-
-        if (amount <= 200L) {
-//            return ResponseEntity.ok(ResultEnum.ALLOWED.name());
-        }
-
-        if (amount <= 1500L) {
-//            return ResponseEntity.ok(ResultEnum.MANUAL_PROCESSING.name());
-        }
-//        return ResponseEntity.ok(ResultEnum.PROHIBITED.name());
-        return null;
+        return ResponseEntity.ok(transactionService.getTransactionValidity(transaction));
     }
 
 }
