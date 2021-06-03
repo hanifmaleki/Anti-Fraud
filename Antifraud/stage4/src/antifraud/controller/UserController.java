@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') #username == authentication.principal.username")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #username == authentication.principal.username")
     public ResponseEntity<User> changePassword(@PathVariable String username, @RequestBody String password) {
         User changedPasswordUser = userService.changePassword(username, password);
         return ResponseEntity.ok(changedPasswordUser);

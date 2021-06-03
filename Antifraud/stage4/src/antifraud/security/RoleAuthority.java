@@ -13,6 +13,6 @@ public class RoleAuthority implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return role.toString();
+        return "ROLE_"+role.toString();
     }
 }
