@@ -44,7 +44,7 @@ public class CardAndIPTestUtil extends BaseTestUtil {
                 .addHeaders(testClass.getAuthorizationHeader(user));
         final HttpResponse response = getRequest.send();
         final int responseCode = response.getStatusCode();
-        if(responseCode == HttpStatus.UNAUTHORIZED.value()){
+        if(responseCode == HttpStatus.FORBIDDEN.value()){
             return false;
         }
         if(responseCode == HttpStatus.OK.value()){
@@ -79,7 +79,7 @@ public class CardAndIPTestUtil extends BaseTestUtil {
                 .addHeaders(testClass.getAuthorizationHeader(user));
         final HttpResponse response = getRequest.send();
         final int responseCode = response.getStatusCode();
-        if(responseCode == HttpStatus.UNAUTHORIZED.value()){
+        if(responseCode == HttpStatus.FORBIDDEN.value()){
             return false;
         }
         if(responseCode == HttpStatus.OK.value()){

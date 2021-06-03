@@ -19,6 +19,7 @@ public class TestDataProvider {
     public final User userWithoutRole;
     public final User userWithoutName;
     public final User userWithoutUsername;
+    public final User adminUser1WithWrongPassword;
 
     // Passwords
     public final String adminUser0HashedPassword;
@@ -51,7 +52,7 @@ public class TestDataProvider {
                 .name("Admin")
                 .username("admin")
                 .role(Role.ADMIN)
-                .password("jk~7K<cGhTFY(<Q*")
+                .password("admin")
                 .build();
         adminUser0HashedPassword = "2d34981e7027c199b6e1c47d1bf4cf8e";
 
@@ -62,7 +63,7 @@ public class TestDataProvider {
                 .role(Role.ADMIN)
                 .password("P4ssw0rd")
                 .build();
-        adminUser1HashedPassword="8efe310f9ab3efeae8d410a8e0166eb2";
+        adminUser1HashedPassword="$2y$12$kC5OXlEKS2kcjUXg.NVyOeOp8W7OW6zonHkmI3VmXrHu5X129KhFO";
 
 
         supportUser1 = User
@@ -116,6 +117,13 @@ public class TestDataProvider {
                 .password("bL57!s^H%+")
                 .build();
 
+        adminUser1WithWrongPassword = User
+                .builder()
+                .name("John Doe")
+                .username("john_doe")
+                .role(Role.ADMIN)
+                .password("Wrong Password")
+                .build();
 
         stolenCard1 = "2223-0031-2200-3222";
         stolenCard2 = "5200-8282-8282-8210";

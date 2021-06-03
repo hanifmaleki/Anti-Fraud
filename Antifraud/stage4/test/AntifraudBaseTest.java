@@ -38,10 +38,7 @@ public abstract class AntifraudBaseTest extends SpringTest {
 
 
     public void log(String message, Object... args) {
-        String param = message;
-        for (Object arg : args) {
-            param = param.replaceFirst("\\{}", arg.toString());
-        }
+        final String param = String.format(message.replaceAll("\\{}", "%s"), args);
         System.out.println(param);
     }
 

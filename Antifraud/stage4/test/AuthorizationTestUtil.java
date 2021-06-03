@@ -72,7 +72,7 @@ public class AuthorizationTestUtil extends BaseTestUtil {
         // get trx with correct user
         transactionUtil.queryTrxAndExpectResultEnum(user, data.trxAllowed, ResultEnum.ALLOWED);
         // get trx with wrong password and except 401
-        transactionUtil.queryTrxAndExpectUnauthorizedHttpStatus(data.adminUser1, data.trxAllowed);
+        transactionUtil.queryTrxAndExpectUnauthorizedHttpStatus(data.adminUser1WithWrongPassword, data.trxAllowed);
 
         userUtil.deleteExistingUser(testClass.getDefaultAdmin(), user.getUsername());
 
@@ -83,6 +83,7 @@ public class AuthorizationTestUtil extends BaseTestUtil {
         // Pre assumption: It is assumed that the only existing user in the DB is admin0
         // Add User
         testClass.log("Adding user {}", user);
+        userUtil.addUserAndExceptStatus(testClass.getDefaultAdmin(), user, HttpStatus.CREATED);
 
         // There is no need to check it
         testClass.log("Check user exist in the list of users");
@@ -96,7 +97,7 @@ public class AuthorizationTestUtil extends BaseTestUtil {
     }
 
     private void checkPrivilegeForUserAndExpect(User user, Privilege privilege, boolean expected) {
-        testClass.log("Check privilege {} for user {}=> expected: {} ", expected);
+        testClass.log("Check privilege {} for user {}=> expected: {} ", privilege, user, expected);
         final Function<User, Boolean> function = privilegeMethodsMap.get(privilege);
 
         final Boolean received = function.apply(user);

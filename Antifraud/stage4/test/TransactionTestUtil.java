@@ -52,7 +52,7 @@ public class TransactionTestUtil extends BaseTestUtil {
     public boolean isUserAuthorizedForTrxQuery(User user, Transaction transaction) {
         HttpResponse response = addQueryAndGetResponse(user, transaction);
         final int responseCode = response.getStatusCode();
-        if(responseCode == HttpStatus.UNAUTHORIZED.value()){
+        if(responseCode == HttpStatus.FORBIDDEN.value()){
             return false;
         }
         if(responseCode == HttpStatus.OK.value()){

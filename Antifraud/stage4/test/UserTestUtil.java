@@ -3,10 +3,12 @@ import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
 import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
@@ -108,7 +110,7 @@ public class UserTestUtil extends BaseTestUtil {
             return true;
         }
 
-        if (statusCode == HttpStatus.UNAUTHORIZED.value()) {
+        if (statusCode == HttpStatus.FORBIDDEN.value()) {
             return false;
         }
 
@@ -139,7 +141,9 @@ public class UserTestUtil extends BaseTestUtil {
             throw new UnexpectedResultException(result);
         }
 
-        List<User> users = Arrays.asList(fromJson(response, User[].class));
+        List<User> users = Arrays.stream(fromJson(response, User[].class))
+                .filter(item -> !item.equals(testClass.getDefaultAdmin()))
+                .collect(Collectors.toList());
 
         users.remove(testClass.getDefaultAdmin());
 
@@ -154,17 +158,17 @@ public class UserTestUtil extends BaseTestUtil {
         return users;
     }
 
-    public void checkHashingPassword(User user, String expectedHashedPassword) {
-        testClass.log("Adding user {} and expect hashed password {}", user, expectedHashedPassword);
+    public void checkHashingPassword(User user) {
+        testClass.log("Adding user {} and expect hashed password", user);
         this.addUserAndExceptStatus(defaultAdmin, user, HttpStatus.CREATED);
         //Get users
         final List<User> users = this.getUsersAndExpectSize(1);
         //Check Hashed Password
         User receivedUSer = users.get(0);
         final String receivedPassword = receivedUSer.getPassword();
-        if (!receivedPassword.equals(expectedHashedPassword)) {
-            String feedback = String.format("The received hashed password is %s, but the expected value is %s",
-                    receivedPassword, expectedHashedPassword);
+        final String userPlainTextPassword = user.getPassword();
+        if (!BCrypt.checkpw(userPlainTextPassword, receivedPassword)) {
+            String feedback = "The received hashed password is not matched with the given password";
             throw new UnexpectedResultException(CheckResult.wrong(feedback));
         }
         //Remove user-1

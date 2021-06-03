@@ -49,9 +49,9 @@ public class AntifraudTest extends AntifraudBaseTest {
 
 
     private void hashTest() {
-        userUtil.checkHashingPassword(data.adminUser1, data.adminUser1HashedPassword);
+        userUtil.checkHashingPassword(data.adminUser1);
 
-        userUtil.checkHashingPassword(data.basicUser2, data.basicUser2HashedPassword);
+        userUtil.checkHashingPassword(data.basicUser2);
     }
 
 
