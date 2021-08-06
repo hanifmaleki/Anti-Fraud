@@ -1,42 +1,83 @@
-<html>
-
 <h2>Description</h2>
-<h3>Please use statistical data characteristics</h3>
-<p>
-    Assume the case that a card has a transaction in france buying a ...
-    In 2 hours .....
-    This is very suspicious .....
-</p>
-<p>
-    Our model of evaluating based on trx amount is restrict and sometimes irrational. Assume someone want to buy a
-    modern?? Laptop????? Our antifraud-system always prevent it ....
-</p>
+
 <p>A rule-based system ....</p>
 
-<h1> Important Question? 1- Storing history   2- Getting history</h1>
+<ol>
+    <li>Giving into account transactions history</li>
+    <li>Introduce trx types</li>
+    <li>Distinguish intelligently amongs different types of transactions</li>
+</ol>
 
 <p><strong>List of transactions properties</strong></p>
 
 <ol>
-    <li>Transaction date/time</li>
+    <li>Transaction date</li>
     <li>Transaction amount //TODO BigDecimal</li>
     <li>Transaction applications (Insurance, Food, Transfer, Online-Shop-real-ware, Online-Shop digital-ware,....)</li>
     <li>IP address</li>
     <li>Country</li>
 </ol>
 
+<p>
+    The philosophy behind the rules is that the probability of fraud in different types of the transactions are not the same
+    e.g. For type insurance the probability is the lowest while a frauder is likely to try some transaction of type transfer
+</p>
+
+<p>
+    The expected amount is also different in each type of transaction. While buying real ware of price 180 seems norma,
+    the same amount need manual verification on a transaction of type food.
+</p>
+
 <h2>Objectives</h2>
 
-<p><strike>Each transaction is queried considering last 3 transaction of a given credit card.</strike></p>
+<p>Each transaction is queried considering last 3 transaction of a given credit card.</p>
 
 <p>Enrich the fraud detection service considering the following rules:</p>
 
 <ol>
-    <li>If the total transactions amount in the last 24 hours&nbsp; between 200 and 1500 =&gt; personal</li>
-    <li>If there total of transactions&nbsp;amount in last 24 hour &gt; 1500 =&gt; Fraud</li>
-    <li>If transactions are from more than 2 countries&nbsp;in the last 24 hours =&gt; Fraud</li>
-    <li>If transactions are from 2 countries&nbsp;&nbsp;=&gt; Personal</li>
-    <li>&nbsp;&nbsp;....</li>
+    <li>If the transactions in the last 24 hours are from more than 2 countries =&gt; Fraud</li>
+    <li>If the transactions in the last 24 hours are from more than 3 IPs =&gt; Fraud</li>
+    <li>If the transactions in the last 24 hours are from 2 countries =&gt; Personal</li>
+    <li>If the transactions in the last 24 hours are from 3 IPs =&gt; Personal</li>
+    <li>If a transaction is known as manual, the next transactions would be either manual or prohibited (unless ....)
+    </li>
+    <li>If a transaction is known as fraud, the next transactions would be fraud (unless ....)</li>
+    <li>Rules on transactions amounts for each transactions based on the type
+        <table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+            <tr>
+                <td>Transaction Type</td>
+                <td>Most Allowed</td>
+                <td>Most Manual</td>
+            </tr>
+            <tbody>
+            <tr>
+                <td>insurance</td>
+                <td>400</td>
+                <td>1200</td>
+            </tr>
+            <tr>
+                <td>real ware</td>
+                <td>200</td>
+                <td>500</td>
+            </tr>
+            <tr>
+                <td>food</td>
+                <td>150</td>
+                <td>300</td>
+            </tr>
+            <tr>
+                <td>online ware</td>
+                <td>150</td>
+                <td>300</td>
+            </tr>
+            <tr>
+                <td>transfer</td>
+                <td>300</td>
+                <td>900</td>
+            </tr>
+            </tbody>
+        </table>
+    </li>
 </ol>
 
 <p>...</p>
@@ -52,10 +93,3 @@
 <p>https://en.wikipedia.org/wiki/Rule-based_system</p>
 
 <p>http://www.kr.tuwien.ac.at/education/ewbs_slides/rule-based.pdf</p>
-
-<p>https://tel.archives-ouvertes.fr/tel-02951477/document</p>
-
-<p>Feedback loop in Machine Learning – Labeling data at https://www.linkedin.com/pulse/feedback-loop-machine-learning-labeling-data-sanchit-tiwari/</p>
-
-
-</html>
