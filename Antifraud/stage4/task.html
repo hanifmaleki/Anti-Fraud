@@ -1,113 +1,165 @@
-<html>
 <h2>Description</h2>
-<p>
-    An enterprise anti-fraud system has hundreds of merchant users who take advantage of the system by only checking
-    validity of the transactions.
-    Such kind of users do not need to modify and see list of stolen cards, suspicious IP addresses and even other users.
-    On the other hand, there are limited number of support users who are responsible for reporting stolen cards/IPs and
-    excluding them from blacklist.
-    This type of users do not need to have access to the user management.
-    Finally, there are a few users who are completely trusted and are allowed to access and modify more sensitive data.
-</p>
+
+<p>An enterprise anti-fraud system has hundreds of merchant users who take advantage of the system by only checking the validity of the transactions. Such kinds of users do not need to modify and see a list of stolen cards, suspicious IP addresses, and even other users. On the other hand, there is limited number of support users who are responsible for reporting stolen cards/IPs and excluding them from blacklist. This type of user does not need to have access to the user management. Finally, there are a few users who are completely trusted and are allowed to access and modify more sensitive data.</p>
+
 <h2>Theory</h2>
-<p>
-<h3> Authentication and Authorization</h3>
-    In this stage authentication and authorization is added to the antifraud-system.
-    Authentication refers to the confirmation of user identity by checking their PIN, password, fingerprint, or face.
-    On the other hand, authentication refers to the confirmation of an already authenticated user for an specific
-    activity in the system.
+
+<h3>Authentication and Authorization</h3>
+
+<p>In this stage authentication and authorization are added to the antifraud system. Authentication refers to the confirmation of user identity by checking their PIN, password, fingerprint, or face. On the other hand, authentication refers to the confirmation of an already authenticated user for a specific activity in the system.</p>
 
 <h3>Encoding the Password</h3>
-    Here authentication is done through a <code>password</code> field that should be sent with the username in each
-    request.
-    The received password is compared with the user password in order to confirm user identity.
-    It is not good practice to maintain password inside the system as plain text.
-    Then a special kind of function is applied to the passwords before saving them in order to make them unusable for
-    ... attackers who managed to see the user database table.
-    A hash function performs a set of operations on the input message which is very hard to be reversed. MD5, and SHA-1
-    are some examples of the hash functions.
-    Luckily Spring Security framework provides a strong encryption <B>BCrypt</B> password encoder that is stronger than the
-    above hashing algorithms.
 
-<h3> Basic Authentication Header</h3>
-    Among many ways of user authentication in HTTP
-    (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization), the BASIC authentication is simplest and
-    most famous one.
-    In the basic authentication, a header key <i>Authentication</i> is added to the HTTP request header.
-    The value of the key is as follows:
-    <code>"Basic: encode(user+password)</code>
+<p>Here authentication is done through a <code>password</code> field that should be sent with the username in each request. The received password is compared with the user password in order to confirm user identity. It is not good practice to maintain passwords inside the system as plain text. Then a special kind of function is applied to the passwords before saving them in order to make them unusable for attackers who managed to see the user database table. A <em>hash function </em>performs a set of operations on the input message which is very hard to be reversed. MD5 and SHA-1 are some examples of hash functions. Luckily Spring Security framework provides a strong encryption <strong>BCrypt</strong> <strong>Password Encoder</strong> that is stronger than the above hashing algorithms.</p>
 
+<h3>Basic Authentication Header</h3>
+
+<p>Among <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization" rel="noopener noreferrer nofollow">many ways of user authentication in HTTP</a>, BASIC authentication is the simplest and most famous one. In the basic authentication, a header key <em>Authentication</em> is added to the HTTP request header. The value of the key is as follows:</p>
+
+<p style="text-align:center"><code>Basic: encode(user+password)</code></p>
 
 <h2>Objectives</h2>
 
 <ol>
-    <li>Enrich the User model by adding field <code>password</code></li>
-    <li>Passwords are immediately encoded with <B>BCrypt</B> of the Spring Security</li>
-    <li>Add an endpoint to user controller for changing password</li>
+    <li>Enrich the User model by adding the field <code>password</code></li>
+    <li>Passwords are immediately encoded with <strong>BCrypt</strong> of the Spring Security</li>
+    <li>Add an endpoint to the user controller for changing the password</li>
     <li>Basic user can only do the following:
         <ul>
             <li>Change her/his password</li>
             <li>Ask for the validity of a transaction</li>
         </ul>
     </li>
-    <li>A support users can do whatever a basic user can do. In addition, the following are allowed for a support user
+    <li>Support users can do whatever a basic user can do. In addition, the following are allowed for a support user
         <ul>
-            <li>Stolen Card Management, i.e. get list, add, remove</li>
-            <li>Suspicious IP Management, i.e. get list, add, remove</li>
+            <li>Stolen Card Management, i.e. get the list, add, remove</li>
+            <li>Suspicious IP Management, i.e. get the list, add, remove</li>
         </ul>
     </li>
-    <li>Updating/Adding/Removing users, are only done by the admin users.
-        In the other world admin users have access to every endpoint of the system.
-    </li>
-    <li>Add a preconfigured admin user admin with password admin should be added by default with username=admin,
-        password=admin, and name=admin
+    <li>Updating/Adding/Removing users, are only done by the admin users. In other world, admin users have access to every endpoint of the system.</li>
+    <li>Add a preconfigured admin user admin with password admin should be added by default with
+        <pre>
+<code>
+username=admin,
+password=admin,
+name=admin
+    </code></pre>
     </li>
 </ol>
 
 <h2>Important Implementation Notes:</h2>
+
 <ol>
-    <li>
-        It is recommended that method security annotation of spring security
-        (https://www.baeldung.com/spring-security-method-security,
-        https://docs.spring.io/spring-security/site/docs/3.0.x/reference/el-access.html) is used.
-        <code>
-            @PutMapping("/{username}")
-            @PreAuthorize("hasRole('ROLE_ADMIN') or #username == authentication.principal.username")
-            public ResponseEntity User changePassword(@PathVariable String username, @RequestBody String password) {
-            User changedPasswordUser = userService.changePassword(username, password);
-            return ResponseEntity.ok(changedPasswordUser);
-            }
-        </code>
+    <li>It is recommended that method security annotation of spring security (https://www.baeldung.com/spring-security-method-security, https://docs.spring.io/spring-security/site/docs/3.0.x/reference/el-access.html) is used.
+        <pre>
+<code class="language-java">
+@PutMapping("/{username}")
+@PreAuthorize("hasRole('ROLE_ADMIN') or #username == authentication.principal.username")
+public ResponseEntity User changePassword(@PathVariable String username, @RequestBody String password) { ...
+        </code></pre>
     </li>
-    <li>It is recommended that the csrf(reference needed) is disabled in order to ease testing. Althogh it is not
-        recommended in real world project, here we suggest a configuration like
-        <code>
-            @EnableWebSecurity
-            @Configuration
-            @EnableGlobalMethodSecurity(
-            prePostEnabled = true,
-            securedEnabled = true,
-            jsr250Enabled = true
-            )
-            public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    <li>It is recommended that the <a href="https://owasp.org/www-community/attacks/csrf" rel="noopener noreferrer nofollow">CSRF</a> is disabled in order to ease testing. Although it is not recommended in real-world project, here we suggest a configuration like
+        <pre>
+<code class="language-java">
+@EnableWebSecurity
+@Configuration
+@EnableGlobalMethodSecurity(
+    prePostEnabled = true,
+    securedEnabled = true,
+    jsr250Enabled = true )
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-            @Bean
-            public PasswordEncoder passwordEncoder() {
-            return new BCryptPasswordEncoder();
-            }
-
-            @Override
-            protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().anyRequest().authenticated()
-            .and().httpBasic()
-            .and().logout()
-            .and().csrf().disable();
-            }
-            }
-        </code>
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests().anyRequest().authenticated()
+			.and().httpBasic()
+			.and().logout()
+			.and().csrf().disable();
+	}
+}
+</code></pre>
     </li>
 </ol>
+
 <h2>Examples</h2>
 
+<p>Pay attention to the following scenario:</p>
 
-</html>
+<ol>
+    <li>Get users using the predefined admin user:
+        <pre>
+<code>
+curl --location --request GET 'http://localhost:28852/api/antifraud/user' --header 'Authorization: Basic YWRtaW46YWRtaW4='
+	</code></pre>
+        <img alt="" src="https://ucarecdn.com/a7f16fd8-8ea4-4e77-a070-5d26204f1fdb/" />
+        <p>&nbsp;</p>
+
+        <p>&nbsp;</p>
+    </li>
+    <li>Adding a support user using the predefined admin user:
+        <pre>
+<code>
+curl --location --request POST 'http://localhost:28852/api/antifraud/user' \
+
+--header 'Authorization: Basic YWRtaW46YWRtaW4=' \
+
+--header 'Content-Type: application/json' \
+
+--data-raw '{
+
+   "name":"Support",
+
+   "username":"support",
+
+   "role":"support",
+
+   "password": "sUpPoRt"
+
+}'
+</code></pre>
+        <img alt="" src="https://ucarecdn.com/ef618ba1-fd5c-4f85-8d69-f530e514ca34/" />
+        <p>&nbsp;</p>
+
+        <p>&nbsp;</p>
+    </li>
+    <li>Get user list using the admin user:
+        <pre>
+<code>curl --location --request GET 'http://localhost:28852/api/antifraud/user' --header 'Authorization: Basic YWRtaW46YWRtaW4='
+    </code></pre>
+        <img alt="" src="https://ucarecdn.com/ab331f95-9c9b-4336-b48b-5349c4bdb4cd/" />
+        <p>&nbsp;</p>
+
+        <p>&nbsp;</p>
+    </li>
+    <li>Getting users list using support user with the wrong password
+        <pre>
+ <code>curl --location --request GET 'http://localhost:28852/api/antifraud/user' --header 'Authorization: Basic c3VwcG9ydDp3cm9uZ1Bhc3N3b3Jk'
+</code></pre>
+        <img alt="" src="https://ucarecdn.com/f13998b3-bc79-44e9-bf90-ce2dcf48dd06/" />
+        <p>&nbsp;</p>
+
+        <p>&nbsp;</p>
+    </li>
+    <li>Support user change his password
+        <pre>
+<code>curl --location --request PUT 'http://localhost:28852/api/antifraud/user/support' \
+--header 'Authorization: Basic c3VwcG9ydDpzVXBQb1J0' \
+--data-raw '{
+    "password": "n3wP4ssw0rd"
+}'
+</code></pre>
+        <img alt="" src="https://ucarecdn.com/23aa0136-528a-4de1-ac35-dc8573c1adbb/" />
+        <p>&nbsp;</p>
+
+        <p>&nbsp;</p>
+    </li>
+    <li>GET users list using the support user with correct password (unauthorized)
+        <pre>
+<code>curl --location --request GET 'http://localhost:28852/api/antifraud/user' --header 'Authorization: Basic c3VwcG9ydDpzVXBQb1J0' \
+	</code></pre>
+        <img alt="" src="https://ucarecdn.com/546c453d-70a7-45c6-84c0-a039358493b4/" /></li>
+</ol>
