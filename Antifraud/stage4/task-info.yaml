@@ -10,8 +10,6 @@ files:
   visible: true
 - name: src/antifraud/model/Role.java
   visible: false
-- name: src/antifraud/service/MD5encoder.java
-  visible: false
 - name: test/UserTestUtil.java
   visible: false
 - name: test/UnexpectedResultException.java
@@ -26,3 +24,11 @@ files:
   visible: false
 - name: test/BaseTestUtil.java
   visible: false
+- name: src/antifraud/security/AntifraudUserDetailsService.java
+  visible: true
+- name: src/antifraud/security/RoleAuthority.java
+  visible: true
+- name: src/antifraud/SecurityConfiguration.java
+  visible: true
+- name: src/antifraud/exception/PasswordNotStrong.java
+  visible: true
