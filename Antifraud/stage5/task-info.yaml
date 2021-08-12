@@ -8,3 +8,11 @@ files:
   visible: true
 - name: test/Tests.java
   visible: false
+- name: src/antifraud/model/TransactionType.java
+  visible: true
+- name: src/antifraud/controller/TransactionTypeController.java
+  visible: true
+- name: src/antifraud/model/TransactionQueryRequest.java
+  visible: true
+- name: test/TransactionTypeTestUtil.java
+  visible: false

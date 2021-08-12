@@ -2,6 +2,7 @@ package antifraud.controller;
 
 import antifraud.model.Transaction;
 import antifraud.model.TransactionResponse;
+import antifraud.model.TransactionType;
 import antifraud.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,5 +30,20 @@ public class TransactionController {
     //TODO Change the method of getting transactions
 
     //TODO to enrich the message
+
+
+    class TransactionQueryRequest{
+        private Transaction transaction;
+        private Integer ipCount;
+        private Integer countryCount;
+    }
+
+    class NarrowTransaction{
+        private int ammount;
+        private int ipAdress;
+        private int country;
+        private TransactionType type;
+    }
+
 
 }

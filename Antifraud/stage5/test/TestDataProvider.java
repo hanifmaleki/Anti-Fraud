@@ -1,6 +1,6 @@
-import antifraud.model.Role;
-import antifraud.model.Transaction;
-import antifraud.model.User;
+import antifraud.model.*;
+
+import java.util.stream.Stream;
 
 public class TestDataProvider {
 
@@ -46,6 +46,17 @@ public class TestDataProvider {
     public final Transaction trxProhibited2;
     public final Transaction trxProhibited3;
 
+    //TransactionTypes
+    public final TransactionType foodTransactionType;
+    public final TransactionType insuranceTransactionType;
+    public final TransactionType realWareTransactionType;
+    public final TransactionType onlineWareTransactionType;
+    public final TransactionType transferTransactionType;
+    public final TransactionType invalidTransactionTypeAllowedIsNotLowerThanMax;
+    public final TransactionType invalidTransactionTypeWithoutMaxManual;
+    public final TransactionType invalidTransactionTypeWithoutMaxAllowed;
+    public final TransactionType invalidTransactionTypeWithoutName;
+
     public TestDataProvider() {
         adminUser0 = User
                 .builder()
@@ -63,7 +74,7 @@ public class TestDataProvider {
                 .role(Role.ADMIN)
                 .password("P4ssw0rd")
                 .build();
-        adminUser1HashedPassword="$2y$12$kC5OXlEKS2kcjUXg.NVyOeOp8W7OW6zonHkmI3VmXrHu5X129KhFO";
+        adminUser1HashedPassword = "$2y$12$kC5OXlEKS2kcjUXg.NVyOeOp8W7OW6zonHkmI3VmXrHu5X129KhFO";
 
 
         supportUser1 = User
@@ -73,7 +84,7 @@ public class TestDataProvider {
                 .role(Role.USER)
                 .password("To8e0rNotTo8e")
                 .build();
-        supportUser1HashedPassword="262e81e11f0bcfb860870db336fc2f93";
+        supportUser1HashedPassword = "262e81e11f0bcfb860870db336fc2f93";
 
 
         basicUser1 = User
@@ -83,7 +94,7 @@ public class TestDataProvider {
                 .role(Role.USER)
                 .password("_vvsH&d$4K")
                 .build();
-        basicUser1HashedPassword="faab1c190c8e7c78d580eaa178dd3b25";
+        basicUser1HashedPassword = "faab1c190c8e7c78d580eaa178dd3b25";
 
 
         basicUser2 = User
@@ -93,7 +104,7 @@ public class TestDataProvider {
                 .role(Role.USER)
                 .password("!PFd,52DyB")
                 .build();
-        basicUser2HashedPassword="d535c0e2c4d07c502b7a216a4d0d0ab1";
+        basicUser2HashedPassword = "d535c0e2c4d07c502b7a216a4d0d0ab1";
 
 
         userWithoutRole = User
@@ -166,5 +177,115 @@ public class TestDataProvider {
                 .ipAddress(suspiciousIp1)
                 .cardSerial(stolenCard1)
                 .build();
+
+
+        foodTransactionType = TransactionType
+                .builder()
+                .name("food")
+                .maxManuall(150)
+                .maxAllowed(300)
+                .build();
+
+        insuranceTransactionType = TransactionType
+                .builder()
+                .name("insurance")
+                .maxManuall(400)
+                .maxAllowed(1200)
+                .build();
+
+        realWareTransactionType = TransactionType
+                .builder()
+                .name("real-ware")
+                .maxManuall(200)
+                .maxAllowed(500)
+                .build();
+
+        onlineWareTransactionType = TransactionType
+                .builder()
+                .name("online-ware")
+                .maxManuall(300)
+                .maxAllowed(800)
+                .build();
+
+        transferTransactionType = TransactionType
+                .builder()
+                .name("transfer")
+                .maxManuall(300)
+                .maxAllowed(900)
+                .build();
+
+        invalidTransactionTypeAllowedIsNotLowerThanMax = TransactionType
+                .builder()
+                .name("invalid_trx_tpe")
+                .maxManuall(300)
+                .maxAllowed(300)
+                .build();
+
+        invalidTransactionTypeWithoutMaxManual = TransactionType
+                .builder()
+                .name("invalid_trx_tpe")
+                .maxManuall(300)
+                .build();
+
+        invalidTransactionTypeWithoutMaxAllowed = TransactionType
+                .builder()
+                .name("invalid_trx_tpe")
+                .maxManuall(300)
+                .build();
+
+        invalidTransactionTypeWithoutName = TransactionType
+                .builder()
+                .maxManuall(300)
+                .maxAllowed(300)
+                .build();
+
+    }
+
+    public final Transaction getTransaction(ResultEnum result, TransactionType type) {
+        switch (result) {
+            case ALLOWED:
+                return getAllowedTransaction(type);
+            case PROHIBITED:
+                return getProhibitedTransaction(type);
+            case MANUAL_PROCESSING:
+                return getManualTransaction(type);
+        }
+        throw new RuntimeException("Not implemented for result of " + result);
+    }
+
+    private Transaction getManualTransaction(TransactionType type) {
+        //TODO complete it
+        return null;
+    }
+
+    private Transaction getProhibitedTransaction(TransactionType type) {
+        //TODO complete it
+        return null;
+    }
+
+    private Transaction getAllowedTransaction(TransactionType type) {
+        //TODO complete it
+        return null;
+    }
+
+    public TransactionType getRandomTransactionType() {
+        //TODO complete it
+        return null;
+    }
+
+    public Stream<TransactionType> getAllValidTransactionTypeStream() {
+        return Stream.of(foodTransactionType,
+                insuranceTransactionType,
+                realWareTransactionType,
+                onlineWareTransactionType,
+                transferTransactionType);
+    }
+
+    public Stream<TransactionType> getAllInvalidTransactionTypeStream() {
+        return Stream.of(
+                invalidTransactionTypeAllowedIsNotLowerThanMax,
+                invalidTransactionTypeWithoutMaxManual,
+                invalidTransactionTypeWithoutMaxAllowed,
+                invalidTransactionTypeWithoutName);
     }
 }

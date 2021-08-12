@@ -1,50 +1,12 @@
 <h2>Description</h2>
+<h1> Do we need transaction id? Lets do it in the next stage</h1>
 
 <p>A rule-based system ....</p>
-
+<p>In this part we .... a rule based system, considering
 <ol>
-    <li>Giving into account transactions history</li>
-    <li>Introduce trx types</li>
-    <li>Distinguish intelligently amongs different types of transactions</li>
-</ol>
-
-<p><strong>List of transactions properties</strong></p>
-
-<ol>
-    <li>Transaction date</li>
-    <li>Transaction amount //TODO BigDecimal</li>
-    <li>Transaction applications (Insurance, Food, Transfer, Online-Shop-real-ware, Online-Shop digital-ware,....)</li>
-    <li>IP address</li>
-    <li>Country</li>
-</ol>
-
-<p>
-    The philosophy behind the rules is that the probability of fraud in different types of the transactions are not the
-    same
-    e.g. For type insurance the probability is the lowest while a frauder is likely to try some transaction of type
-    transfer
-</p>
-
-<p>
-    The expected amount is also different in each type of transaction. While buying real ware of price 180 seems norma,
-    the same amount need manual verification on a transaction of type food.
-</p>
-
-<h2>Objectives</h2>
-
-<p>Each transaction is queried considering last 3 transaction of a given credit card.</p>
-
-<p>Enrich the fraud detection service considering the following rules:</p>
-
-<ol>
-    <li>If the transactions in the last 24 hours are from more than 2 countries =&gt; Fraud</li>
-    <li>If the transactions in the last 24 hours are from more than 3 IPs =&gt; Fraud</li>
-    <li>If the transactions in the last 24 hours are from 2 countries =&gt; Personal</li>
-    <li>If the transactions in the last 24 hours are from 3 IPs =&gt; Personal</li>
-    <li>If a transaction is known as manual, the next transactions would be either manual or prohibited (unless ....)
-    </li>
-    <li>If a transaction is known as fraud, the next transactions would be fraud (unless ....)</li>
-    <li>Rules on transactions amounts for each transactions based on the type
+    <li>Introduce trx types
+        <p>Bring Flexibility to the software</p>
+        <p>Here is an example </p>
         <table border="1" cellpadding="1" cellspacing="1" style="width:500px">
             <tr>
                 <td>Transaction Type</td>
@@ -80,6 +42,92 @@
             </tbody>
         </table>
     </li>
+    <li>Distinguish intelligently amongs different types of transactions</li>
+</ol>
+</p>
+
+
+<p><strong>List of transactions properties</strong></p>
+
+<ol>
+    <li>Transaction date</li>
+    <li>Transaction amount //TODO BigDecimal</li>
+    <li>Transaction applications (Insurance, Food, Transfer, Online-Shop-real-ware, Online-Shop digital-ware,....)</li>
+    <li>IP address</li>
+    <li>Country</li>
+</ol>
+
+<p>
+    The philosophy behind the rules is that the probability of fraud in different types of the transactions are not the
+    same
+    e.g. For type insurance the probability is the lowest while a frauder is likely to try some transaction of type
+    transfer
+</p>
+
+<p>
+    The expected amount is also different in each type of transaction. While buying real ware of price 180 seems norma,
+    the same amount need manual verification on a transaction of type food.
+</p>
+
+<h2>Objectives</h2>
+...............................................
+
+
+<ol>
+    <li>Adding Transaction Type: resource/model, controller only for admin</li>
+    <li> Add the following two fields to the transaction:
+        <ol>
+            <li>Transaction type of type String?</li>
+            <li>Transaction country of type String?</li>
+        </ol>
+    </li>
+    <li>Add TransactionQueryRequest containing three below fields:
+        <ol>
+            <li>transaction: which represent the transaction to be queried</li>
+            <li>ipCount: represent the number of IPs that the purchase is done in the last 24 hours</li>
+            <li>new IP: is set to ture if the transaction is done from the new IP address; If it is from an existing IP
+                adress in the last 24 hours it is set to false
+            </li>
+            <li>countryCount: represents the number of countries in the last 24 hours which a transaction took place
+                from
+            </li>
+            <li>new Country: is set to true if it is from a new country; Otherwise if the country already exist in the
+                transactions of the last 24 hours, it is set to false
+            </li>
+        </ol>
+    </li>
+    <li>
+        The rules of next part are applying for each incoming transaction.
+    </li>
+
+</ol>
+<p>Enrich the fraud detection service considering the following rules:</p>
+
+<h3>Rules</h3>
+<p>Enrich the fraud detection service considering the following rules:</p>
+<ol>
+    <li>The rule of stolen card from stage-3 is still valid. That means the transactions from stolen crads are still
+        prohibited
+    </li>
+    <li>The rule of suspicious IP adresses from stage-3 is still valid</li>
+    <li>If the transactions in the last 24 hours are from more than 2 countries =&gt; Fraud</li>
+    <li>If the transactions in the last 24 hours are from more than 3 IPs =&gt; Fraud</li>
+    <li>If the transactions in the last 24 hours are from 2 countries =&gt; Personal</li>
+    <li>If the transactions in the last 24 hours are from 3 IPs =&gt; Personal</li>
+    <li>The rule on the amount of the transaction, is replaced as follows.
+        For each transaction find its type by name and compare the amopunt of the transaction with maxAllowed and
+        maxManual
+        <ol>
+            <li> If the transaction amount is less than the maxAllowed, it is allowed</li>
+            <li> If the transaction ampunt is less than maxAllowed (but more than maxManual) then it is manual</li>
+            <li> If the transaction amount is greater than maxAllowed of the transactionType, the it is prohibited</li>
+        </ol>
+    </li>
+
+<h1>Only one Single message when it is not allowed</h1>
+    <!--<li>Rules on transactions amounts for each transactions based on the type
+
+    </li>-->
 </ol>
 
 <h2> TODO Add a method for transaction history </h2>

@@ -13,4 +13,5 @@ public class Transaction {
     private Integer amount;
     private String ipAddress;
     private String cardSerial;
+    private String type;
 }
