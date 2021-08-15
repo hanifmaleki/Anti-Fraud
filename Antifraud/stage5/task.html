@@ -74,10 +74,17 @@
 
 
 <ol>
-    <li>Adding Transaction Type: resource/model, controller only for admin</li>
-    <li> Add the following two fields to the transaction:
+    <li><b>Adding Transaction Type:</b>
         <ol>
-            <li>Transaction type of type String?</li>
+        <li>resource/model: consist of typeName(unique), max-manual, and max-allowed, (max-allowed lower (not equal) than max-manuall)
+        ALL of the properties should be specified</li>
+            <li> controller only for admin POST GET DELETE</li>
+            <li></li>
+        </ol>
+    </li>
+    <li> <b>Enrich transaction model</b> Add the following two fields to the transaction:
+        <ol>
+            <li>Transaction type name of type String</li>
             <li>Transaction country of type String?</li>
         </ol>
     </li>
@@ -130,13 +137,8 @@
     </li>-->
 </ol>
 
-<h2> TODO Add a method for transaction history </h2>
 
-<h2>TODO Change the method of getting transactions </h2>
 
-<h2>TODO to enrich the message</h2>
-
-<p>...</p>
 
 <h2>Examples</h2>
 
@@ -144,7 +146,12 @@
 
 <p>&nbsp;</p>
 
-<p>Refrences</p>
+<h2> TODO</h2>
+<ol>
+    <li>Change success response of the DELETE operations to 202(ACCEPTED) instead of 200(OK)</li>
+</ol>
+
+<h2>Refrences</h2>
 
 <p>https://en.wikipedia.org/wiki/Rule-based_system</p>
 

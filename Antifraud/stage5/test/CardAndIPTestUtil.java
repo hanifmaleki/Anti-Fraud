@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static data.IpAndCardDataProvider.IP_ADDRESS;
+import static data.IpAndCardDataProvider.STOLEN_ADDRESS;
 import static org.springframework.http.HttpStatus.OK;
 
 public class CardAndIPTestUtil extends BaseTestUtil {
@@ -21,26 +23,26 @@ public class CardAndIPTestUtil extends BaseTestUtil {
     private void addStolenCardAndExpectStatus(String serialNumber, HttpStatus expectedStatus) {
         Map<String, String> params = new HashMap<>();
         params.put("serialNumber", serialNumber);
-        HttpRequest postRequest = testClass.post(TestDataProvider.STOLEN_ADDRESS, params);
+        HttpRequest postRequest = testClass.post(STOLEN_ADDRESS, params);
         sendPostRequestAndExpect(serialNumber, expectedStatus, postRequest);
     }
 
 
     public List<String> getStolenCardsAndExpectSize(int expectedSize) {
-        HttpRequest getRequest = testClass.get(TestDataProvider.STOLEN_ADDRESS)
+        HttpRequest getRequest = testClass.get(STOLEN_ADDRESS)
                 .addHeaders(testClass.getDefaultAdminAuthorization());
         return getListOfStringWithExpectedSize(expectedSize, getRequest);
     }
 
     public void deleteCardAndExpect(User user, String serialNumber, HttpStatus expectedStatus) {
-        HttpRequest deleteRequest = testClass.delete(TestDataProvider.STOLEN_ADDRESS + "/" + serialNumber)
+        HttpRequest deleteRequest = testClass.delete(STOLEN_ADDRESS + "/" + serialNumber)
                 .addHeaders(testClass.getAuthorizationHeader(user));
         sendDeleteRequestAndExpect(serialNumber, expectedStatus, deleteRequest);
 
     }
 
     public boolean isAuthorizedCardGet(User user){
-        HttpRequest getRequest = testClass.get(TestDataProvider.STOLEN_ADDRESS)
+        HttpRequest getRequest = testClass.get(STOLEN_ADDRESS)
                 .addHeaders(testClass.getAuthorizationHeader(user));
         final HttpResponse response = getRequest.send();
         final int responseCode = response.getStatusCode();
@@ -57,25 +59,25 @@ public class CardAndIPTestUtil extends BaseTestUtil {
     public void addSuspiciousIpAndExpectStatus(User user, String ip, HttpStatus expectedStatus) {
         Map<String, String> params = new HashMap<>();
         params.put("ip", ip);
-        HttpRequest postRequest = testClass.post(TestDataProvider.IP_ADDRESS, params)
+        HttpRequest postRequest = testClass.post(IP_ADDRESS, params)
                 .addHeaders(testClass.getAuthorizationHeader(user));
         sendPostRequestAndExpect(ip, expectedStatus, postRequest);
     }
 
     public List<String> getSuspiciousIpsAndExpectSize(int expectedSize) {
-        HttpRequest getRequest = testClass.get(TestDataProvider.IP_ADDRESS)
+        HttpRequest getRequest = testClass.get(IP_ADDRESS)
                 .addHeaders(testClass.getDefaultAdminAuthorization());
         return getListOfStringWithExpectedSize(expectedSize, getRequest);
     }
 
     public void deleteSuspiciousIpAndExpect(User user, String ip, HttpStatus expectedStatus) {
-        HttpRequest deleteRequest = testClass.delete(TestDataProvider.IP_ADDRESS + "/" + ip)
+        HttpRequest deleteRequest = testClass.delete(IP_ADDRESS + "/" + ip)
                 .addHeaders(testClass.getAuthorizationHeader(user));
         sendDeleteRequestAndExpect(ip, expectedStatus, deleteRequest);
     }
 
     public boolean isAuthorizedIpGet(User user){
-        HttpRequest getRequest = testClass.get(TestDataProvider.IP_ADDRESS)
+        HttpRequest getRequest = testClass.get(IP_ADDRESS)
                 .addHeaders(testClass.getAuthorizationHeader(user));
         final HttpResponse response = getRequest.send();
         final int responseCode = response.getStatusCode();

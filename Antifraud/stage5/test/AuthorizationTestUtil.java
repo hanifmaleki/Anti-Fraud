@@ -1,6 +1,7 @@
 import antifraud.model.ResultEnum;
 import antifraud.model.Role;
 import antifraud.model.User;
+import data.TestDataProvider;
 import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
 
@@ -15,14 +16,16 @@ public class AuthorizationTestUtil extends BaseTestUtil {
     private final CardAndIPTestUtil cardUtil;
     private final TransactionTestUtil transactionUtil;
     private final UserTestUtil userUtil;
+    private final TransactionTypeTestUtil typeUtil;
     private final TestDataProvider data;
     private final Map<Privilege, Function<User, Boolean>> privilegeMethodsMap = new HashMap<>();
 
-    public AuthorizationTestUtil(AntifraudBaseTest testClass, CardAndIPTestUtil cardUtil, TransactionTestUtil transactionUtil, UserTestUtil userUtil, TestDataProvider data) {
+    public AuthorizationTestUtil(AntifraudBaseTest testClass, CardAndIPTestUtil cardUtil, TransactionTestUtil transactionUtil, UserTestUtil userUtil, TransactionTypeTestUtil typeUtil, TestDataProvider data) {
         super(testClass);
         this.cardUtil = cardUtil;
         this.transactionUtil = transactionUtil;
         this.userUtil = userUtil;
+        this.typeUtil = typeUtil;
         this.data = data;
 
         privilegeMethodsMap.put(Privilege.OWN_MODIFY, userUtil::isAuthorizedChangeOwnPassword);
@@ -37,9 +40,16 @@ public class AuthorizationTestUtil extends BaseTestUtil {
         TRX_QUERY,
         CARD_MANAGEMENT,
         IP_MANAGEMENT,
-        USER_MANAGEMENT;
+        USER_MANAGEMENT,
+        TRANSACTION_TYPE_MANAGEMENT;
 
-        public static List<Privilege> ALL_PRIVILEGES = Arrays.asList(OWN_MODIFY, TRX_QUERY, CARD_MANAGEMENT, IP_MANAGEMENT, USER_MANAGEMENT);
+        public static List<Privilege> ALL_PRIVILEGES = Arrays.asList(
+                OWN_MODIFY,
+                TRX_QUERY,
+                CARD_MANAGEMENT,
+                IP_MANAGEMENT,
+                USER_MANAGEMENT,
+                TRANSACTION_TYPE_MANAGEMENT);
         public static List<Privilege> ADMIN_PRIVILEGES = ALL_PRIVILEGES;
         public static List<Privilege> SUPPORT_PRIVILEGES = Arrays.asList(OWN_MODIFY, TRX_QUERY, CARD_MANAGEMENT, IP_MANAGEMENT);
         public static List<Privilege> BASIC_PRIVILEGES = Arrays.asList(OWN_MODIFY, TRX_QUERY);
@@ -70,9 +80,10 @@ public class AuthorizationTestUtil extends BaseTestUtil {
         // Add user
         userUtil.addUserAndExceptStatus(testClass.getDefaultAdmin(), user, HttpStatus.CREATED);
         // get trx with correct user
-        transactionUtil.queryTrxAndExpectResultEnum(user, data.trxAllowed, ResultEnum.ALLOWED);
+
+        transactionUtil.queryTrxAndExpectResultEnum(user, data.transaction.getAllowedTrxRequest(), ResultEnum.ALLOWED);
         // get trx with wrong password and except 401
-        transactionUtil.queryTrxAndExpectUnauthorizedHttpStatus(data.adminUser1WithWrongPassword, data.trxAllowed);
+        transactionUtil.queryTrxAndExpectUnauthorizedHttpStatus(data.user.adminUser1WithWrongPassword, data.transaction.getAllowedTrxRequest());
 
         userUtil.deleteExistingUser(testClass.getDefaultAdmin(), user.getUsername());
 
@@ -115,7 +126,11 @@ public class AuthorizationTestUtil extends BaseTestUtil {
 
 
     private Boolean isAuthorizedTrx(User user) {
-        return transactionUtil.isUserAuthorizedForTrxQuery(user, data.trxAllowed);
+        return transactionUtil.isUserAuthorizedForTrxQuery(user, data.transaction.getAllowedTrxRequest());
+    }
+
+    private Boolean isAuthorizedTypeManagement(User user) {
+        return typeUtil.isAuthorizedForTypeManagement(user);
     }
 
 

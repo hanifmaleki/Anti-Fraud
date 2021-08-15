@@ -16,3 +16,13 @@ files:
   visible: true
 - name: test/TransactionTypeTestUtil.java
   visible: false
+- name: test/data/TransactionTypeDataProvider.java
+  visible: false
+- name: test/data/TransactionDataProvider.java
+  visible: false
+- name: test/data/UserDataProvider.java
+  visible: false
+- name: test/data/IpAndCardDataProvider.java
+  visible: false
+- name: test/HttpRequestType.java
+  visible: false

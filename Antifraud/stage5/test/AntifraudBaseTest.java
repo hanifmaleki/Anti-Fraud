@@ -1,5 +1,7 @@
 import antifraud.model.User;
 import org.assertj.swing.junit.dependency.commons_codec.binary.Base64;
+import org.hyperskill.hstest.mocks.web.request.HttpRequest;
+import org.hyperskill.hstest.mocks.web.response.HttpResponse;
 import org.hyperskill.hstest.stage.SpringTest;
 import org.hyperskill.hstest.testcase.CheckResult;
 
@@ -57,5 +59,40 @@ public abstract class AntifraudBaseTest extends SpringTest {
 
     public Map<String, String> getDefaultAdminAuthorization() {
         return getAuthorizationHeader(getDefaultAdmin());
+    }
+
+    public HttpResponse sendRequestAndExpectResponse(String address, HttpRequestType type, String jsonPayloads, User user, int expectedCode) {
+        HttpRequest httpRequest = getHttpRequest(address, type, jsonPayloads);
+        if (user != null) {
+            httpRequest.addHeaders(getAuthorizationHeader(user));
+        }
+        final HttpResponse send = httpRequest.send();
+        if (send.getStatusCode() != expectedCode) {
+            //TODO complete it
+            String feedback = "";
+            throw new UnexpectedResultException(CheckResult.wrong(feedback));
+        }
+        return send;
+    }
+
+    private HttpRequest getHttpRequest(String address, HttpRequestType type, String jsonPaylod) {
+        HttpRequest httpRequest = null;
+        switch (type) {
+            case GET: {
+                httpRequest = this.get(address);
+                break;
+            }
+            case POST: {
+                httpRequest = this.post(address, jsonPaylod);
+                break;
+            }
+            case DELETE: {
+                httpRequest = this.delete(address);
+                break;
+            }
+            default:
+                throw new RuntimeException("Type " + type + " is not supported");
+        }
+        return httpRequest;
     }
 }

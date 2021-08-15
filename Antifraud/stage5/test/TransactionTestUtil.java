@@ -1,7 +1,5 @@
-import antifraud.model.ResultEnum;
-import antifraud.model.Transaction;
-import antifraud.model.TransactionResponse;
-import antifraud.model.User;
+import antifraud.model.*;
+import data.TestDataProvider;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
 import org.hyperskill.hstest.testcase.CheckResult;
@@ -11,19 +9,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static data.TransactionDataProvider.TRX_ADDRESS;
+
 public class TransactionTestUtil extends BaseTestUtil {
     public TransactionTestUtil(AntifraudBaseTest testClass) {
         super(testClass);
     }
 
-    public void queryTrxAndExpectResultEnum(User user, Transaction transaction, ResultEnum expectedResult, String... expectedMessageWords) {
-        HttpResponse response = addQueryAndGetResponse(user, transaction);
+    public void queryTrxAndExpectResultEnum(User user, TransactionQueryRequest transactionRequest, ResultEnum expectedResult, String... expectedMessageWords) {
+        HttpResponse response = addQueryAndGetResponse(user, transactionRequest);
         TransactionResponse transactionResponse = fromJson(response, TransactionResponse.class);
 
         ResultEnum receivedResult = transactionResponse.getResult();
         if (receivedResult != expectedResult) {
-            String feedback = String.format("The transaction %s result is %s but expected to be %s",
-                    transaction.toString(), receivedResult, expectedResult);
+            String feedback = String.format("The transactionRequest %s result is %s but expected to be %s",
+                    transactionRequest.toString(), receivedResult, expectedResult);
             throw new UnexpectedResultException(CheckResult.wrong(feedback));
         }
 
@@ -39,8 +39,8 @@ public class TransactionTestUtil extends BaseTestUtil {
         }
     }
 
-    public void queryTrxAndExpectUnauthorizedHttpStatus(User user, Transaction transaction) {
-        HttpResponse response = addQueryAndGetResponse(user, transaction);
+    public void queryTrxAndExpectUnauthorizedHttpStatus(User user, TransactionQueryRequest transactionQueryRequest) {
+        HttpResponse response = addQueryAndGetResponse(user, transactionQueryRequest);
         final int responseCode = response.getStatusCode();
 
         if(responseCode != HttpStatus.UNAUTHORIZED.value()){
@@ -49,8 +49,8 @@ public class TransactionTestUtil extends BaseTestUtil {
         }
     }
 
-    public boolean isUserAuthorizedForTrxQuery(User user, Transaction transaction) {
-        HttpResponse response = addQueryAndGetResponse(user, transaction);
+    public boolean isUserAuthorizedForTrxQuery(User user, TransactionQueryRequest transactionQueryRequest) {
+        HttpResponse response = addQueryAndGetResponse(user, transactionQueryRequest);
         final int responseCode = response.getStatusCode();
         if(responseCode == HttpStatus.FORBIDDEN.value()){
             return false;
@@ -63,9 +63,9 @@ public class TransactionTestUtil extends BaseTestUtil {
     }
 
 
-    private HttpResponse addQueryAndGetResponse(User user, Transaction transaction) {
-        final String trxJson = toJson(transaction);
-        HttpRequest getRequest = testClass.post(TestDataProvider.TRX_ADDRESS, trxJson)
+    private HttpResponse addQueryAndGetResponse(User user, TransactionQueryRequest trxRequest) {
+        final String trxJson = toJson(trxRequest);
+        HttpRequest getRequest = testClass.post(TRX_ADDRESS, trxJson)
                 .addHeaders(testClass.getAuthorizationHeader(user));
         return getRequest.send();
     }

@@ -1,5 +1,6 @@
 import antifraud.AntifraudApplication;
 import antifraud.model.User;
+import data.TestDataProvider;
 import org.hyperskill.hstest.dynamic.DynamicTest;
 import org.hyperskill.hstest.testcase.CheckResult;
 
@@ -9,7 +10,8 @@ public class AntifraudPreviousStagesTest extends AntifraudBaseTest {
     private final TransactionTestUtil transactionUtil = new TransactionTestUtil(this);
     private final CardAndIPTestUtil cardIpUtil = new CardAndIPTestUtil(this);
     private final UserTestUtil userUtil = new UserTestUtil(this);
-    private final AuthorizationTestUtil authorizationUtil = new AuthorizationTestUtil(this, cardIpUtil, transactionUtil, userUtil, data);
+    private final TransactionTypeTestUtil typeUtil = new TransactionTypeTestUtil(this);
+    private final AuthorizationTestUtil authorizationUtil = new AuthorizationTestUtil(this, cardIpUtil, transactionUtil, userUtil, typeUtil, data);
 
 
     public AntifraudPreviousStagesTest() {
@@ -49,29 +51,29 @@ public class AntifraudPreviousStagesTest extends AntifraudBaseTest {
 
 
     private void hashTest() {
-        userUtil.checkHashingPassword(data.adminUser1);
+        userUtil.checkHashingPassword(data.user.adminUser1);
 
-        userUtil.checkHashingPassword(data.basicUser2);
+        userUtil.checkHashingPassword(data.user.basicUser2);
     }
 
 
     // Just try trx query with all types of users
     private void checkAuthentication() {
-        authorizationUtil.checkAuthentication(data.adminUser1);
-        authorizationUtil.checkAuthentication(data.supportUser1);
-        authorizationUtil.checkAuthentication(data.basicUser2);
+        authorizationUtil.checkAuthentication(data.user.adminUser1);
+        authorizationUtil.checkAuthentication(data.user.supportUser1);
+        authorizationUtil.checkAuthentication(data.user.basicUser2);
 
     }
 
     private void checkAuthorisation() {
-        authorizationUtil.checkAuthorizations(data.adminUser1);
-        authorizationUtil.checkAuthorizations(data.supportUser1);
-        authorizationUtil.checkAuthorizations(data.basicUser2);
+        authorizationUtil.checkAuthorizations(data.user.adminUser1);
+        authorizationUtil.checkAuthorizations(data.user.supportUser1);
+        authorizationUtil.checkAuthorizations(data.user.basicUser2);
     }
 
 
     @Override
     public User getDefaultAdmin() {
-        return data.adminUser0;
+        return data.user.adminUser0;
     }
 }
