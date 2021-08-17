@@ -1,32 +1,21 @@
 <h2>Description</h2>
-<h1> Do we need transaction id? Lets do it in the next stage</h1>
 
-<p>A rule-based system is an artificial intelligence based software which take advantages of human defined rules in ord
-    to automate processes of a given business.
-</p>
-<p>In this part we implement a rule based system, considering the different types of the transactions as well as
-    a history of transactions on the card.
+<p>A rule-based system is an artificial intelligence-based software that takes advantage of human-defined rules in ord to automate processes of a given business.</p>
+
+<p>In this part we implement a rule-based system, considering the different types of transactions as well as a history of transactions on the card.</p>
+
 <h3>Transaction Types</h3>
-<p>
-    There are a variety of transactions that can be applied on a card. Basically, it worse to consider what is provided
-    by a
-    payment in order to realize whether it is a valid transaction. For instance assume a case that a payment of 200
-    Dollars
-    is queried for ordering some foods. Clearly, it seems strenge that someone pays such amount in order to buy food. On
-    the
-    other hand assume the same amount is paid to buy an insurance. In this case it seems more reasonable. The following
-    table
-    shows an example set of transaction types and their allowed values. The transaction types with the amount lower than
-    <i>Max Allowed</i> are considered valid, between <i>Max Allowed</i> and <i>Max Manual</i> needs manual and
-    validation
-    and more than <i>Max Manual</i> are considered as <i>Prohibited</i>.
-</p>
+
+<p>There are a variety of transactions that can be applied to a card. Basically, it is worth considering what is provided by payment in order to realize whether it is a valid transaction. For instance, assume a case that a transaction of 200 Dollars is queried for ordering some foods. Clearly, it seems strange that someone pays such an amount in order to buy food. On the other hand, assume the same amount is paid to buy insurance. In this case, it seems more reasonable. The following table shows an example set of transaction types and their allowed values. The transaction types with the amount lower than <em>Max Allowed</em> are considered valid, between <em>Max Allowed</em> and <em>Max Manual</em> needs manual and validation, and more than <em>Max Manual</em> are considered as <em>Prohibited</em>.</p>
+
 <table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+    <tbody>
     <tr>
         <td>Transaction Type</td>
         <td>Max Allowed</td>
         <td>Max Manual</td>
     </tr>
+    </tbody>
     <tbody>
     <tr>
         <td>insurance</td>
@@ -55,111 +44,80 @@
     </tr>
     </tbody>
 </table>
-</li>
 
-In this step a flexible way is provided for the system admins to define the necessary transaction types and define
-the values of <i>Max Allowed</i> and <i>Max Manual</i> on it. It enables to distinguish intelligently amongst
-different types of transactions.
+<p>In this step, a flexible way is provided for the system admins to define the necessary transaction types and define the values of <em>Max Allowed</em> and <em>Max Manual</em> on it. It enables to distinguish intelligently amongst different types of transactions.</p>
 
-
-<p>
-    The philosophy behind the rules is that the probability of fraud in different types of the transactions are not the
-    same
-    e.g. For type insurance the probability is the lowest while a frauder is likely to try some transaction of type
-    transfer
-</p>
-
-<p>
-    The expected amount is also different in each type of transaction. While buying real ware of price 180 seems norma,
-    the same amount need manual verification on a transaction of type food.
-</p>
+<p>The philosophy behind the rules is that the probability of fraud in different types of transactions are not the same e.g. For type insurance the probability is the lowest while a fraudster is likely to try some transaction of type transfer.</p>
 
 <h2>Objectives</h2>
-The following are the objectives of this state:
+
+<p>The following are the objectives of this state:</p>
+
 <ol>
-    <li><b>Enrich Transaction Model:</b>
-        <p>The following properties are added to the transactionmodel</p>
+    <li><strong>Enrich Transaction Model:</strong>
+
+        <p>The following properties are added to the transaction model</p>
 
         <ol>
-            <li>Transaction date</li>
-            <li>Transaction Type</li>
-            <li>IP address</li>
-        </ol>
-
-    <li><b>Adding Transaction Type:</b>
-        <ol>
-            <li>Model: consist of the following <i>Not Null</i> properties:
-                <ol>
-                    <li> <i>typeName</i> unique string
-                    </li>
-                    <li> <i>max-allowed</i>> (positive integer)</li>
-                    <li> <i>max-manual </i>(positive integer and greater than <i>max-allowed</i></li>
-                </ol>
-                ALL of the properties should be specified().
-            </li>
-            <li>A new rest controller <i>TransactionTypeRestController</i> with address <i>/api/antifraud/transaction-type</i>
-                that expose the following rest requests:
-                <ol>
-                    <li>POST that returns status code <b>Created(201)</b> for successful, <b>Conflict(409)</b> for
-                        duplicate type name, and <b>Unprocessable Entity(422)</b> for invalid entities.</li>
-                    <li>GET that returns the list of existing types with code <b>Ok(200)</b></li>
-                    <li>DELETE that get a given type name and returns <b>Accepted(202)</b>, <b>No Content(204)</b> for
-                        non-existing type name</li>
-                </ol>
-                which are available only for admin-user and returns <b>Non Authorized(203)</b> for other types of users.
-            </li>
+            <li><em>Transaction Type Name&nbsp;</em>(String)</li>
+            <li><em>IP address </em>(String)</li>
         </ol>
     </li>
-    <li><b>Enrich transaction model</b> Add the following two fields to the transaction:
+    <li><strong>Adding Transaction Type:</strong>
         <ol>
-            <li>Transaction type name of type String</li>
-            <li>Transaction country of type String?</li>
+            <li><strong>Model</strong>: consist of the following <em>Not Null</em> properties:
+                <ol>
+                    <li><em>typeName</em> unique string</li>
+                    <li><em>max-allowed</em>&gt; (positive integer)</li>
+                    <li><em>max-manual </em>(positive integer and greater than <em>max-allowed</em></li>
+                </ol>
+                ALL of the properties should be specified().</li>
+            <li><strong>Rest controllers</strong>:&nbsp;<em>TransactionTypeRestController</em> with address &quot;<em>/api/antifraud/transaction-type&quot;</em> that expose the following rest requests:
+                <ol>
+                    <li><u>POST</u> that returns status code <strong>Created(201)</strong> for successful, <strong>Conflict(409)</strong> for duplicate type name, and <strong>Unprocessable Entity(422)</strong> for invalid entities.</li>
+                    <li><u>GET </u>that returns the list of existing types with code <strong>Ok(200)</strong></li>
+                    <li><u>DELETE </u>that get a given type name and returns <strong>Accepted(202)</strong>, <strong>No Content(204)</strong> for non-existing type name</li>
+                </ol>
+                which are available only for admin-user and returns <strong>Not Authorized(203)</strong> for other types of users.</li>
         </ol>
     </li>
-    <li>Asking for a validity of transaction(GET /api/antifraud/transaction) get a request body of type
-        <i>TransactionQueryRequest</i> instead of <i>Transaction</i> containing three below fields:
+    <li><strong>Transaction Rest Controller:</strong> Asking for the validity of transaction(<u>GET </u>/api/antifraud/transaction) get a request body of type <em>TransactionQueryRequest</em> instead of <em>Transaction</em> containing three below fields:
         <ol>
-            <li><i>transaction</i>: which represent the transaction to be queried</li>
-            <li><i>ipCount</i>: represent the number of IPs that the purchase is done in the last 24 hours</li>
+            <li><em>transaction</em>: which represent the transaction to be queried</li>
+            <li><em>ipCount</em>: represent the number of IPs that the purchase is done in the last 24 hours</li>
             <!--li>new IP: is set to ture if the transaction is done from the new IP address; If it is from an existing IP
-                adress in the last 24 hours it is set to false
-            </li-->
-            <li><i>countryCount</i>: represents the number of countries in the last 24 hours which a transaction took place
-                from </li>
+                    adress in the last 24 hours it is set to false
+                </li-->
+            <li><em>countryCount</em>: represents the number of countries in the last 24 hours which a transaction took place from</li>
             <!--li>new Country: is set to true if it is from a new country; Otherwise if the country already exist in the
-                transactions of the last 24 hours, it is set to false
-            </li-->
+                    transactions of the last 24 hours, it is set to false
+                </li-->
         </ol>
     </li>
-    <li><b>Rules</b>
+    <li><strong>Rules</strong>
         <p>The following rules are applied for each incoming transaction.</p>
+
+        <h3>Only one Single message when it is not allowed(?)</h3>
+
         <ol>
-            <li>The rule of stolen card from stage-3 is still valid. That means the transactions from stolen crads are still
-                prohibited
-            </li>
-            <li>The rule of suspicious IP adresses from stage-3 is still valid</li>
+            <li>The rule of stolen cards from stage-3 is still valid. That means the transactions from stolen crads are still prohibited</li>
+            <li>The rule of suspicious IP addresses from stage-3 is still valid</li>
             <li>If the transactions in the last 24 hours are from more than 2 countries =&gt; Fraud</li>
             <li>If the transactions in the last 24 hours are from more than 3 IPs =&gt; Fraud</li>
             <li>If the transactions in the last 24 hours are from 2 countries =&gt; Personal</li>
             <li>If the transactions in the last 24 hours are from 3 IPs =&gt; Personal</li>
-            <li>The rule on the amount of the transaction, is replaced as follows.
-                For each transaction find its type by name and compare the amopunt of the transaction with maxAllowed and
-                maxManual
+            <li>The rule on the amount of the transaction is replaced as follows. For each transaction find its type by name and compare the amount of the transaction with <em>Max Allowed </em>and <em>Max Manual</em>
                 <ol>
-                    <li> If the transaction amount is less than the maxAllowed, it is allowed</li>
-                    <li> If the transaction ampunt is less than maxAllowed (but more than maxManual) then it is manual</li>
-                    <li> If the transaction amount is greater than maxAllowed of the transactionType, the it is prohibited</li>
+                    <li>If the transaction amount is less than the <em>Max Allowed</em>, it is allowed</li>
+                    <li>If the transaction amount is less than <em>Max Allowed</em> (but more than <em>Max Manual</em>) then it is manual</li>
+                    <li>If the transaction amount is greater than <em>Max Allowed </em>of the transaction type, then it is prohibited</li>
                 </ol>
             </li>
-
-            <h1>Only one Single message when it is not allowed</h1>
             <!--<li>Rules on transactions amounts for each transactions based on the type
 
-            </li>-->
+                </li>-->
         </ol>
-
     </li>
-
 </ol>
 
 <h2>Examples</h2>
@@ -168,12 +126,13 @@ The following are the objectives of this state:
 
 <p>&nbsp;</p>
 
-<h2> TODO</h2>
+<h2>TODO</h2>
+
 <ol>
-    <li>Change success response of the DELETE operations to 202(ACCEPTED) instead of 200(OK)</li>
+    <li>Change success response of the DELETE operations to 202(ACCEPTED) instead of 200(OK) in the previous steps</li>
 </ol>
 
-<h2>Refrences</h2>
+<h2>References</h2>
 
 <p>https://en.wikipedia.org/wiki/Rule-based_system</p>
 
