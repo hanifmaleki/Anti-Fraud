@@ -1,14 +1,12 @@
 package antifraud.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,4 +18,19 @@ public class TransactionType {
     private Integer maxAllowed; //TODO BigDecimal
     @Positive
     private Integer maxManuall; //TODO BigDecimal
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TransactionType type = (TransactionType) o;
+
+        return name.equals(type.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

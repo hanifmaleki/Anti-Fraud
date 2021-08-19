@@ -26,3 +26,7 @@ files:
   visible: false
 - name: test/HttpRequestType.java
   visible: false
+- name: src/antifraud/service/TransactionTypeService.java
+  visible: true
+- name: src/antifraud/exception/InvalidDataException.java
+  visible: true

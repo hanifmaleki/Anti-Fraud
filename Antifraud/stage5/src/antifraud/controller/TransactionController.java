@@ -27,25 +27,4 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTransactionValidity(transaction));
     }
 
-    //TODO Add a method for transaction history
-
-    //TODO Change the method of getting transactions
-
-    //TODO to enrich the message
-
-
-    class TransactionQueryRequest{
-        private Transaction transaction;
-        private Integer ipCount;
-        private Integer countryCount;
-    }
-
-    class NarrowTransaction{
-        private int ammount;
-        private int ipAdress;
-        private int country;
-        private TransactionType type;
-    }
-
-
 }
