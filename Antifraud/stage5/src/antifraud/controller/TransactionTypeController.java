@@ -3,6 +3,7 @@ package antifraud.controller;
 import antifraud.model.TransactionType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/antifraud/transaction-type")
 @Secured({"ROLE_ADMIN"})
+@Validated
 public class TransactionTypeController {
     @PostMapping
     public ResponseEntity

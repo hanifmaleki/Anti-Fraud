@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequestMapping("/api/antifraud/suspicious-ip")
 @Secured({"ROLE_SUPPORT", "ROLE_ADMIN"})
 @RequiredArgsConstructor
+@Validated
 public class SuspiciousIpController {
 
     private final SuspiciousIpService ipService;
