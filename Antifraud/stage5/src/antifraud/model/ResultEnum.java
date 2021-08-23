@@ -1,5 +1,5 @@
 package antifraud.model;
 
-public enum ResultEnum {
+public enum ResultEnum{
     ALLOWED, PROHIBITED, MANUAL_PROCESSING
 }

@@ -2,6 +2,7 @@ package antifraud.service;
 
 import antifraud.model.ResultEnum;
 import antifraud.model.Transaction;
+import antifraud.model.TransactionQueryRequest;
 import antifraud.model.TransactionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,13 +13,11 @@ import org.springframework.stereotype.Component;
 public class TransactionService {
 
     private static final long MAX_ALLOWED = 200L;
-    private static final long MAX_MANUALL = 1500L;
+    private static final long MAX_MANUAL = 1500L;
 
     private final String ALLOWED_MESSAGE = "The transaction is allowed.";
     private final String MANUAL_MESSAGE = "The transactions with this price needs to be confirmed manually.";
     private final String PROHIBITED_AMOUNT_MESSAGE = "The transaction is above allowed value.";
-    private final String PROHIBITED_CARD_MESSAGE = "The given card is in the blacklist.";
-    private final String PROHIBITED_IP_MESSAGE = "The given IP address is suspicious.";
 
     private final StolenCardService cardService;
     private final SuspiciousIpService ipService;
@@ -29,7 +28,7 @@ public class TransactionService {
         Long amount = Long.valueOf(transaction.getAmount());
         TransactionResponse result = getResultByAmount(amount);
 
-        if (cardService.isBlacklist(transaction.getCardSerial())) {
+       /* if (cardService.isBlacklist(transaction.getCardSerial())) {
             if (result.getResult() != ResultEnum.PROHIBITED) {
                 result.setResult(ResultEnum.PROHIBITED);
                 result.setMessage(PROHIBITED_CARD_MESSAGE);
@@ -45,9 +44,13 @@ public class TransactionService {
             } else {
                 result.setMessage(result.getMessage() + "\n" + PROHIBITED_IP_MESSAGE);
             }
-        }
+        }*/
 
         return result;
+    }
+
+    public TransactionResponse getTransactionValidity(TransactionQueryRequest transactionRequest) {
+        return null;
     }
 
     private TransactionResponse getResultByAmount(Long amount) {
@@ -58,7 +61,7 @@ public class TransactionService {
                     .build();
         }
 
-        if (amount <= MAX_MANUALL) {
+        if (amount <= MAX_MANUAL) {
             return TransactionResponse.builder()
                     .result(ResultEnum.MANUAL_PROCESSING)
                     .message(MANUAL_MESSAGE)
