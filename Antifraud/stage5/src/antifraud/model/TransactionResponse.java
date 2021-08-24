@@ -10,6 +10,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TransactionResponse {
+
+    private final static String ALLOWED_MESSAGE = "The transaction is allowed.";
+
     private ResultEnum result;
     private String message;
+
+    public static TransactionResponse allowedResponse() {
+        return TransactionResponse
+                .builder()
+                .result(ResultEnum.ALLOWED)
+                .message(ALLOWED_MESSAGE)
+                .build();
+    }
 }

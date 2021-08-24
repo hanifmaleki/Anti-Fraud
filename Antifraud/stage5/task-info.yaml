@@ -38,3 +38,5 @@ files:
   visible: true
 - name: src/antifraud/service/rules/CardCheckRule.java
   visible: true
+- name: src/antifraud/service/rules/TransactionAmountRule.java
+  visible: true

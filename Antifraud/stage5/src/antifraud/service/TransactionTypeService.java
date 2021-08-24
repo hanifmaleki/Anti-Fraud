@@ -6,37 +6,35 @@ import antifraud.exception.InvalidDataException;
 import antifraud.model.TransactionType;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TransactionTypeService {
 
-    private final Set<TransactionType> types = new HashSet<>();
+    private final Map<String, TransactionType> types = new HashMap<>();
 
     public void addTransactionType(TransactionType transactionType) {
-        if (types.contains(transactionType)) {
+        if (types.containsKey(transactionType.getName())) {
             throw new DuplicateDataException(String.format(transactionType.getName()));
         }
         if (transactionType.getMaxManuall() <= transactionType.getMaxAllowed()) {
             throw new InvalidDataException("The Max Allowed value should be less than Max Manual");
         }
-        types.add(transactionType);
+        types.put(transactionType.getName(), transactionType);
     }
 
-    public void deleteTransactioType(String name) {
-        final TransactionType transactionType = TransactionType
-                .builder()
-                .name(name)
-                .build();
-        if (!types.remove(transactionType)) {
+    public void deleteTransactionType(String name) {
+        if (!types.containsKey(name)) {
             throw new DataNotFoundException("There is no transaction type with name" + name);
         }
+        types.remove(name);
+    }
+
+    public Optional<TransactionType> getTransactionTypeByName(String name) {
+        return Optional.ofNullable(types.get(name));
     }
 
     public List<TransactionType> getTransactionTypes() {
-        return new ArrayList(types);
+        return new ArrayList(types.values());
     }
 }

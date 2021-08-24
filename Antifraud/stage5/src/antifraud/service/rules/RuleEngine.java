@@ -1,11 +1,44 @@
 package antifraud.service.rules;
 
 import antifraud.model.ResultEnum;
+import antifraud.model.TransactionQueryRequest;
 import antifraud.model.TransactionResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static antifraud.model.ResultEnum.ALLOWED;
+
+@Service
 public class RuleEngine {
 
-    TransactionResponse mergerTransactionResult(TransactionResponse response1, TransactionResponse response2) {
+
+    private final List<TransactionRule> rules;
+
+    @Autowired
+    public RuleEngine(List<TransactionRule> rules) {
+        this.rules = rules;
+    }
+
+    public TransactionResponse getTransactionValidity(TransactionQueryRequest queryRequest) {
+        final TransactionResponse response = rules
+                .stream()
+                .map(rule -> rule.getTransactionValidity(queryRequest))
+                .reduce(TransactionResponse.allowedResponse(), (a, b) -> mergerTransactionResult(a, b));
+
+        return response;
+    }
+
+    //TODO can move to TransactionResponse
+    private TransactionResponse mergerTransactionResult(TransactionResponse response1, TransactionResponse response2) {
+        if (response1 == null) {
+            return response2;
+        }
+        if (response2 == null) {
+            return response1;
+        }
+
         if (response1.getResult().equals(response2.getResult())) {
             return TransactionResponse
                     .builder()
@@ -17,12 +50,13 @@ public class RuleEngine {
         return getGreaterResponse(response1, response2);
     }
 
-    TransactionResponse getGreaterResponse(TransactionResponse response1, TransactionResponse response2) {
+
+    private TransactionResponse getGreaterResponse(TransactionResponse response1, TransactionResponse response2) {
         if (response1.getResult() == response1.getResult()) {
             throw new RuntimeException("Could not find greater in two equal response");
         }
 
-        final boolean response1IsLowest = response1.getResult() == ResultEnum.ALLOWED;
+        final boolean response1IsLowest = response1.getResult() == ALLOWED;
         final boolean response2IsGreatest = response2.getResult() == ResultEnum.PROHIBITED;
 
         if (response1IsLowest || response2IsGreatest) {
@@ -32,4 +66,8 @@ public class RuleEngine {
         return response1;
 
     }
+
+
+
+
 }

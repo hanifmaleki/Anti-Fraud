@@ -32,7 +32,7 @@ public class TransactionTypeController {
 
     @DeleteMapping("/{typeName}")
     public ResponseEntity<Void> remove(@PathVariable String typeName) {
-        transactionTypeService.deleteTransactioType(typeName);
+        transactionTypeService.deleteTransactionType(typeName);
         return ResponseEntity.ok().build();
     }
 }

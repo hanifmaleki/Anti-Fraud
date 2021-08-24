@@ -6,8 +6,9 @@ import antifraud.model.TransactionQueryRequest;
 import antifraud.model.TransactionResponse;
 import antifraud.service.SuspiciousIpService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-
+@Service
 @RequiredArgsConstructor
 public class IpCheckRule implements TransactionRule {
 

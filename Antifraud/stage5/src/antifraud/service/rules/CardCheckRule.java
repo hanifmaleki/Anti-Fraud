@@ -6,7 +6,9 @@ import antifraud.model.TransactionQueryRequest;
 import antifraud.model.TransactionResponse;
 import antifraud.service.StolenCardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class CardCheckRule implements TransactionRule {
     private final String PROHIBITED_CARD_MESSAGE = "The given card is in the blacklist.";
