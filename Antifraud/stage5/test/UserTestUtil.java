@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static data.UserDataProvider.USER_ADDRESS;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -49,7 +50,7 @@ public class UserTestUtil extends BaseTestUtil {
 
     public void deleteExistingUser(User removerUser, String username) {
         final Map<String, String> authorizationParameter = testClass.getAuthorizationHeader(removerUser);
-        HttpRequest delete = testClass.delete(TestDataProvider.USER_ADDRESS + "/" + username)
+        HttpRequest delete = testClass.delete(USER_ADDRESS + "/" + username)
                 .addHeaders(authorizationParameter);
         HttpResponse response = delete.send();
         if (response.getStatusCode() != OK.value()) {
@@ -60,7 +61,7 @@ public class UserTestUtil extends BaseTestUtil {
 
     public void deleteNonExistingUser(User removerUser, String username) {
         final Map<String, String> authorizationParameter = testClass.getAuthorizationHeader(removerUser);
-        HttpRequest delete = testClass.delete(TestDataProvider.USER_ADDRESS + "/" + username);
+        HttpRequest delete = testClass.delete(USER_ADDRESS + "/" + username);
         delete.addHeaders(authorizationParameter);
         HttpResponse response = delete.send();
         int statusCode = response.getStatusCode();
@@ -83,7 +84,7 @@ public class UserTestUtil extends BaseTestUtil {
     public void addUserAndExceptStatus(User adderUser, User addingUser, HttpStatus httpStatus) {
         // Add User
         String user1Json = toJson(addingUser);
-        HttpRequest httpRequest = testClass.post(TestDataProvider.USER_ADDRESS, user1Json)
+        HttpRequest httpRequest = testClass.post(USER_ADDRESS, user1Json)
                 .addHeaders(testClass.getAuthorizationHeader(adderUser));
         final HttpResponse response = httpRequest.send();
         // Except httpStatus
@@ -91,7 +92,7 @@ public class UserTestUtil extends BaseTestUtil {
         if (response.getStatusCode() != status) {
             String feedback = String.format("POST %s should respond with status code %d, responded: %d\n\n" +
                             "Response body:\n%s"
-                    , TestDataProvider.USER_ADDRESS, status, response.getStatusCode(), response.getContent());
+                    , USER_ADDRESS, status, response.getStatusCode(), response.getContent());
             CheckResult result = CheckResult.wrong(feedback);
 
             throw new UnexpectedResultException(result);
@@ -100,7 +101,7 @@ public class UserTestUtil extends BaseTestUtil {
 
     public boolean isAuthorizedPasswordChange(User changerUser, User changingUser) {
 
-        String address = String.format("%s/%s", TestDataProvider.USER_ADDRESS, changingUser.getUsername());
+        String address = String.format("%s/%s", USER_ADDRESS, changingUser.getUsername());
         final Map<String, String> authorizationParameter = testClass.getAuthorizationHeader(changerUser);
         // It does not change password, just check if it is possible
         final HttpRequest httpRequest = testClass.put(address, changingUser.getPassword())
@@ -130,14 +131,14 @@ public class UserTestUtil extends BaseTestUtil {
      * @return Number of users EXCLUDING the default user
      */
     public List<User> getUsersAndExpectSize(Integer expectedSize) {
-        HttpRequest httpRequest = testClass.get(TestDataProvider.USER_ADDRESS)
+        HttpRequest httpRequest = testClass.get(USER_ADDRESS)
                 .addHeaders(testClass.getDefaultAdminAuthorization());
         HttpResponse response = httpRequest.send();
 
         if (response.getStatusCode() != OK.value()) {
             String feedback = String.format("GET %s should respond with status code 200, responded: %d\n\n" +
                             "Response body:\n%s"
-                    , TestDataProvider.USER_ADDRESS, response.getStatusCode(), response.getContent());
+                    , USER_ADDRESS, response.getStatusCode(), response.getContent());
             CheckResult result = CheckResult.wrong(feedback);
             throw new UnexpectedResultException(result);
         }
