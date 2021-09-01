@@ -30,13 +30,7 @@ files:
   visible: true
 - name: src/antifraud/exception/InvalidDataException.java
   visible: true
-- name: src/antifraud/service/rules/TransactionRule.java
+- name: src/antifraud/SecurityConfiguration.java
   visible: true
-- name: src/antifraud/service/rules/RuleEngine.java
-  visible: true
-- name: src/antifraud/service/rules/IpCheckRule.java
-  visible: true
-- name: src/antifraud/service/rules/CardCheckRule.java
-  visible: true
-- name: src/antifraud/service/rules/TransactionAmountRule.java
+- name: src/antifraud/service/rules/IpCountRule.java
   visible: true

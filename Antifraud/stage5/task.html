@@ -137,3 +137,19 @@
 <p>https://en.wikipedia.org/wiki/Rule-based_system</p>
 
 <p>http://www.kr.tuwien.ac.at/education/ewbs_slides/rule-based.pdf</p>
+
+
+
+curl -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":100,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+< HTTP/1.1 200
+{"result":"ALLOWED","message":"The transaction is allowed."}
+
+curl -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":151,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+< HTTP/1.1 200
+{"result":"MANUAL_PROCESSING","message":"The transactions with this price needs to be confirmed manually."}
+
+
+curl -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":301,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+< HTTP/1.1 200
+{"result":"PROHIBITED","message":"The transaction is above allowed value."}
+

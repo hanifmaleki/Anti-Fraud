@@ -40,10 +40,11 @@ public class RuleEngine {
         }
 
         if (response1.getResult().equals(response2.getResult())) {
+            String message = response1.getResult()==ALLOWED ? response1.getMessage() : String.format("%s\n%s", response1.getMessage(), response2.getMessage());
             return TransactionResponse
                     .builder()
                     .result(response1.getResult())
-                    .message(String.format("%s\n%s", response1.getMessage(), response2.getMessage()))
+                    .message(message)
                     .build();
         }
 
@@ -52,7 +53,7 @@ public class RuleEngine {
 
 
     private TransactionResponse getGreaterResponse(TransactionResponse response1, TransactionResponse response2) {
-        if (response1.getResult() == response1.getResult()) {
+        if (response1.getResult() == response2.getResult()) {
             throw new RuntimeException("Could not find greater in two equal response");
         }
 
