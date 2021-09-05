@@ -6,7 +6,7 @@ import org.hyperskill.hstest.testcase.CheckResult;
 
 import static antifraud.model.ResultEnum.*;
 
-public class AntifraudCurrentStageTest extends AntifraudBaseTest {
+public class AntifraudTest extends AntifraudBaseTest {
 
     private final TestDataProvider data = new TestDataProvider();
     private final TransactionTestUtil transactionUtil = new TransactionTestUtil(this);
@@ -16,7 +16,7 @@ public class AntifraudCurrentStageTest extends AntifraudBaseTest {
     private final AuthorizationTestUtil authorizationUtil = new AuthorizationTestUtil(this, cardIpUtil, transactionUtil, userUtil, transactionTypeTestUtil, data);
 
 
-    public AntifraudCurrentStageTest() {
+    public AntifraudTest() {
         super(AntifraudApplication.class);
     }
 

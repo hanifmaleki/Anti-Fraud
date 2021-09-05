@@ -1,12 +1,21 @@
 <h2>Description</h2>
 
-<p>A rule-based system is an artificial intelligence-based software that takes advantage of human-defined rules in ord to automate processes of a given business.</p>
+<p>A rule-based system is an artificial intelligence-based software that takes advantage of human-defined rules in ord
+    to automate processes of a given business.</p>
 
-<p>In this part we implement a rule-based system, considering the different types of transactions as well as a history of transactions on the card.</p>
+<p>In this part we implement a rule-based system, considering the different types of transactions as well as a history
+    of transactions on the card.</p>
 
 <h3>Transaction Types</h3>
 
-<p>There are a variety of transactions that can be applied to a card. Basically, it is worth considering what is provided by payment in order to realize whether it is a valid transaction. For instance, assume a case that a transaction of 200 Dollars is queried for ordering some foods. Clearly, it seems strange that someone pays such an amount in order to buy food. On the other hand, assume the same amount is paid to buy insurance. In this case, it seems more reasonable. The following table shows an example set of transaction types and their allowed values. The transaction types with the amount lower than <em>Max Allowed</em> are considered valid, between <em>Max Allowed</em> and <em>Max Manual</em> needs manual and validation, and more than <em>Max Manual</em> are considered as <em>Prohibited</em>.</p>
+<p>There are a variety of transactions that can be applied to a card. Basically, it is worth considering what is
+    provided by payment in order to realize whether it is a valid transaction. For instance, assume a case that a
+    transaction of 200 Dollars is queried for ordering some foods. Clearly, it seems strange that someone pays such an
+    amount in order to buy food. On the other hand, assume the same amount is paid to buy insurance. In this case, it
+    seems more reasonable. The following table shows an example set of transaction types and their allowed values. The
+    transaction types with the amount lower than <em>Max Allowed</em> are considered valid, between <em>Max Allowed</em>
+    and <em>Max Manual</em> needs manual and validation, and more than <em>Max Manual</em> are considered as <em>Prohibited</em>.
+</p>
 
 <table border="1" cellpadding="1" cellspacing="1" style="width:500px">
     <tbody>
@@ -45,9 +54,13 @@
     </tbody>
 </table>
 
-<p>In this step, a flexible way is provided for the system admins to define the necessary transaction types and define the values of <em>Max Allowed</em> and <em>Max Manual</em> on it. It enables to distinguish intelligently amongst different types of transactions.</p>
+<p>In this step, a flexible way is provided for the system admins to define the necessary transaction types and define
+    the values of <em>Max Allowed</em> and <em>Max Manual</em> on it. It enables to distinguish intelligently amongst
+    different types of transactions.</p>
 
-<p>The philosophy behind the rules is that the probability of fraud in different types of transactions are not the same e.g. For type insurance the probability is the lowest while a fraudster is likely to try some transaction of type transfer.</p>
+<p>The philosophy behind the rules is that the probability of fraud in different types of transactions are not the same
+    e.g. For type insurance the probability is the lowest while a fraudster is likely to try some transaction of type
+    transfer.</p>
 
 <h2>Objectives</h2>
 
@@ -71,27 +84,33 @@
                     <li><em>max-allowed</em>&gt; (positive integer)</li>
                     <li><em>max-manual </em>(positive integer and greater than <em>max-allowed</em></li>
                 </ol>
-                ALL of the properties should be specified().</li>
-            <li><strong>Rest controllers</strong>:&nbsp;<em>TransactionTypeRestController</em> with address &quot;<em>/api/antifraud/transaction-type&quot;</em> that expose the following rest requests:
+                ALL of the properties should be specified().
+            </li>
+            <li><strong>Rest controllers</strong>:&nbsp;<em>TransactionTypeRestController</em> with address &quot;<em>/api/antifraud/transaction-type&quot;</em>
+                that expose the following rest requests:
                 <ol>
-                    <li><u>POST</u> that returns status code <strong>Created(201)</strong> for successful, <strong>Conflict(409)</strong> for duplicate type name, and <strong>Unprocessable Entity(422)</strong> for invalid entities.</li>
+                    <li><u>POST</u> that returns status code <strong>Created(201)</strong> for successful, <strong>Conflict(409)</strong>
+                        for duplicate type name, and <strong>Unprocessable Entity(422)</strong> for invalid entities.
+                    </li>
                     <li><u>GET </u>that returns the list of existing types with code <strong>Ok(200)</strong></li>
-                    <li><u>DELETE </u>that get a given type name and returns <strong>Accepted(202)</strong>, <strong>No Content(204)</strong> for non-existing type name</li>
+                    <li><u>DELETE </u>that get a given type name and returns <strong>Accepted(202)</strong>, <strong>No
+                        Content(204)</strong> for non-existing type name
+                    </li>
                 </ol>
-                which are available only for admin-user and returns <strong>Not Authorized(203)</strong> for other types of users.</li>
+                which are available only for admin-user and returns <strong>Not Authorized(203)</strong> for other types
+                of users.
+            </li>
         </ol>
     </li>
-    <li><strong>Transaction Rest Controller:</strong> Asking for the validity of transaction(<u>GET </u>/api/antifraud/transaction) get a request body of type <em>TransactionQueryRequest</em> instead of <em>Transaction</em> containing three below fields:
+    <li><strong>Transaction Rest Controller:</strong> Asking for the validity of transaction(<u>GET </u>/api/antifraud/transaction)
+        get a request body of type <em>TransactionQueryRequest</em> instead of <em>Transaction</em> containing three
+        below fields:
         <ol>
             <li><em>transaction</em>: which represent the transaction to be queried</li>
             <li><em>ipCount</em>: represent the number of IPs that the purchase is done in the last 24 hours</li>
-            <!--li>new IP: is set to ture if the transaction is done from the new IP address; If it is from an existing IP
-                    adress in the last 24 hours it is set to false
-                </li-->
-            <li><em>countryCount</em>: represents the number of countries in the last 24 hours which a transaction took place from</li>
-            <!--li>new Country: is set to true if it is from a new country; Otherwise if the country already exist in the
-                    transactions of the last 24 hours, it is set to false
-                </li-->
+            <li><em>countryCount</em>: represents the number of countries in the last 24 hours which a transaction took
+                place from
+            </li>
         </ol>
     </li>
     <li><strong>Rules</strong>
@@ -100,31 +119,146 @@
         <h3>Only one Single message when it is not allowed(?)</h3>
 
         <ol>
-            <li>The rule of stolen cards from stage-3 is still valid. That means the transactions from stolen crads are still prohibited</li>
+            <li>The rule of stolen cards from stage-3 is still valid. That means the transactions from stolen crads are
+                still prohibited
+            </li>
             <li>The rule of suspicious IP addresses from stage-3 is still valid</li>
             <li>If the transactions in the last 24 hours are from more than 2 countries =&gt; Fraud</li>
             <li>If the transactions in the last 24 hours are from more than 3 IPs =&gt; Fraud</li>
             <li>If the transactions in the last 24 hours are from 2 countries =&gt; Personal</li>
             <li>If the transactions in the last 24 hours are from 3 IPs =&gt; Personal</li>
-            <li>The rule on the amount of the transaction is replaced as follows. For each transaction find its type by name and compare the amount of the transaction with <em>Max Allowed </em>and <em>Max Manual</em>
+            <li>The rule on the amount of the transaction is replaced as follows. For each transaction find its type by
+                name and compare the amount of the transaction with <em>Max Allowed </em>and <em>Max Manual</em>
                 <ol>
                     <li>If the transaction amount is less than the <em>Max Allowed</em>, it is allowed</li>
-                    <li>If the transaction amount is less than <em>Max Allowed</em> (but more than <em>Max Manual</em>) then it is manual</li>
-                    <li>If the transaction amount is greater than <em>Max Allowed </em>of the transaction type, then it is prohibited</li>
+                    <li>If the transaction amount is less than <em>Max Allowed</em> (but more than <em>Max Manual</em>)
+                        then it is manual
+                    </li>
+                    <li>If the transaction amount is greater than <em>Max Allowed </em>of the transaction type, then it
+                        is prohibited
+                    </li>
                 </ol>
             </li>
-            <!--<li>Rules on transactions amounts for each transactions based on the type
-
-                </li>-->
         </ol>
     </li>
 </ol>
 
 <h2>Examples</h2>
 
-<p>...</p>
+<ol>
+    <li>Add a user of type&nbsp;<em>support</em>&nbsp;using the predefined&nbsp;<em>admin&nbsp;</em>user
 
-<p>&nbsp;</p>
+        <pre>
+<code>$ curl -v -u admin:admin -X POST "http://localhost:8080/api/antifraud/user" -H "accept: */*" -H "Content-Type:application/json" -d "{\"name\":\"Support\",\"username\":\"support\", \"role\":\"support\", \"password\":\"sUpPoRt\"}"
+
+
+ HTTP/1.1 201</code></pre>
+    </li>
+    <li>Add transaction-type&nbsp;<em>food </em>using the <em>support</em> user and expect&nbsp;<em>unauthorized</em>
+        <pre>
+<code>curl -v -u support:sUpPoRt -X POST "http://localhost:8080/api/antifraud/transaction-type" -H "accept: */*" -H "Content-Type: application/json" -d "{\"maxAllowed\":150,\"maxManuall\":300,\"name\":\"food\"}"
+
+
+HTTP/1.1 403</code></pre>
+    </li>
+    <li>Add transaction-type&nbsp;<em>food </em>using the predefined&nbsp; <em>admin</em> user
+        <pre>
+<code>$ curl -v -u admin:admin -X POST "http://localhost:8080/api/antifraud/transaction-type" -H "accept: */*" -H "Content-Type: application/json" -d "{\"maxAllowed\":150,\"maxManuall\":300,\"name\":\"food\"}"
+
+
+
+HTTP/1.1 201</code></pre>
+    </li>
+    <li>Get a list of transactions types using the&nbsp;<em>admin</em>&nbsp;user
+        <pre>
+<code>$ curl -v -u admin:admin localhost:8080/api/antifraud/transaction-typ
+[{"name":"food","maxAllowed":150,"maxManuall":300}]
+HTTP/1.1 200</code></pre>
+    </li>
+    <li>Add a user of type&nbsp;<em>user&nbsp;</em>using the predefined&nbsp;<em>admin</em>&nbsp;user
+        <pre>
+<code>curl -v -u admin:admin -X POST "http://localhost:8080/api/antifraud/user" -H "accept: */*" -H "Content-Type:application/json" -d "{\"name\":\"User\",\"username\":\"user\", \"role\":\"user\", \"password\":\"user\"}"
+
+
+HTTP/1.1 201</code></pre>
+    </li>
+    <li>The query for a transaction with an unknown type using normal user</li>
+    <pre><code>
+$  curl -v -u admin:admin -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":100,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"unknown\"}}"
+
+< HTTP/1.1 404
+
+    </code></pre>
+    <li>The query for a transaction of type <em>food</em>&nbsp;using normal user and expect ALLOWED
+        <pre>
+<code>
+
+curl -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":100,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+
+&lt; HTTP/1.1 200
+{"result":"ALLOWED","message":"The transaction is allowed."}
+</code></pre>
+    </li>
+    <li>The query for a transaction of type <em>food</em>&nbsp;using normal user and expect MANUAL
+        <pre>
+<code>$ curl -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":151,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+
+    &lt; HTTP/1.1 200
+{"result":"MANUAL_PROCESSING","message":"The transactions with this price needs to be confirmed manually."}
+</code></pre>
+    </li>
+
+    <li>The query of Transactions&nbsp;of type <em>food</em>&nbsp;using normal user and the number of country = 3 and
+        expect MANUAL with both messages
+        <pre>
+<code>
+$  curl -v -u user:user -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":2,\"ipCount\":3,\"transaction\":{\"amount\":250,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+
+&lt; HTTP/1.1 200
+{"result":"MANUAL_PROCESSING","message":"The number of IPs exceeded the maximum number\nThe transactions with this price needs to be confirmed manually."}
+</code></pre>
+    </li>
+    <li>The query for a transaction of type <em>food</em>&nbsp;the number of country = 2 using normal user and expect
+        PROHIBITED state and only PROHIBITED message
+        <pre>
+<code>
+$ curl -v -u user:user -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":301,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+
+&lt; HTTP/1.1 200
+{"result":"PROHIBITED","message":"The transaction is above allowed value."}
+</code></pre>
+    </li>
+    <li>The query for a transaction of type <em>food</em>&nbsp;the number of country = 3 using normal user and expect
+        PROHIBITED state and only PROHIBITED message
+        <pre>
+<code>
+$ curl -v -u user:user -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":3,\"ipCount\":3,\"transaction\":{\"amount\":301,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+
+&lt; HTTP/1.1 200
+{"result":"PROHIBITED","message":"The transaction is above allowed value."}
+</code></pre>
+    </li>
+    <li>The query for a transaction of type <em>food</em>&nbsp;the number of country = 4 using normal user and expect
+        PROHIBITED state and both PROHIBITED messages
+        <pre>
+<code>
+$ curl -v -u user:user -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":4,\"ipCount\":4,\"transaction\":{\"amount\":301,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+
+&lt; HTTP/1.1 200
+{"result":"PROHIBITED","message":"The number of countries exceeded the maximum number\nThe transaction is above allowed value."}
+</code></pre>
+    </li>
+    <li>The query for a transaction of type <em>food</em>&nbsp;the number of country = 3 and number of IP = 4 using
+        normal user and expect PROHIBITED state and all 3 PROHIBITED message
+        <pre>
+<code>
+$ curl -v -u user:user -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":6,\"ipCount\":6,\"transaction\":{\"amount\":301,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
+
+&lt; HTTP/1.1 200
+{"result":"PROHIBITED","message":"The number of countries exceeded the maximum number\nThe number of IPs exceeded the maximum number\nThe transaction is above allowed value."}
+    </code></pre>
+    </li>
+</ol>
 
 <h2>TODO</h2>
 
@@ -133,23 +267,8 @@
 </ol>
 
 <h2>References</h2>
+<ol>
+    <li>https://en.wikipedia.org/wiki/Rule-based_system</li>
 
-<p>https://en.wikipedia.org/wiki/Rule-based_system</p>
-
-<p>http://www.kr.tuwien.ac.at/education/ewbs_slides/rule-based.pdf</p>
-
-
-
-curl -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":100,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
-< HTTP/1.1 200
-{"result":"ALLOWED","message":"The transaction is allowed."}
-
-curl -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":151,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
-< HTTP/1.1 200
-{"result":"MANUAL_PROCESSING","message":"The transactions with this price needs to be confirmed manually."}
-
-
-curl -X POST "http://localhost:8080/api/antifraud/transaction" -H "accept: */*" -H "Content-Type: application/json" -d "{\"countryCount\":1,\"ipCount\":2,\"transaction\":{\"amount\":301,\"cardSerial\":\"4012888888881881\",\"ipAddress\":\"211.212.213.214\",\"type\":\"food\"}}"
-< HTTP/1.1 200
-{"result":"PROHIBITED","message":"The transaction is above allowed value."}
-
+    <li>http://www.kr.tuwien.ac.at/education/ewbs_slides/rule-based.pdf</li>
+</ol>
