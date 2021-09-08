@@ -1,4 +1,5 @@
 import antifraud.model.User;
+import exception.UnexpectedResultException;
 import org.assertj.swing.junit.dependency.commons_codec.binary.Base64;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;

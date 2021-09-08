@@ -1,5 +1,6 @@
 import antifraud.model.TransactionType;
 import antifraud.model.User;
+import exception.UnexpectedResultException;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
 import org.hyperskill.hstest.testcase.CheckResult;
@@ -19,8 +20,14 @@ public class TransactionTypeTestUtil extends BaseTestUtil {
         super(testClass);
     }
 
+    private User defaultUser = this.testClass.getDefaultAdmin();
+
 
     public void addTransactionTypesAndCheckSuccessResult(Stream<TransactionType> transactionTypes) {
+        this.addTransactionTypesAndCheckSuccessResult(transactionTypes, defaultUser);
+    }
+
+    public void addTransactionTypesAndCheckSuccessResult(Stream<TransactionType> transactionTypes, User user) {
         clearTransactionTypes();
 
         AtomicReference<Integer> counter = new AtomicReference<>(0);
@@ -28,7 +35,7 @@ public class TransactionTypeTestUtil extends BaseTestUtil {
 
             // given a trxType
             // Add it
-            this.addTransactionTypeAndExpectCreated(transactionType);
+            this.addTransactionTypeAndExpectCreated(transactionType, user);
             counter.getAndSet(counter.get() + 1);
 
             // you should give it
@@ -41,7 +48,7 @@ public class TransactionTypeTestUtil extends BaseTestUtil {
     public void addDuplicateAndExpectException(TransactionType transactionType) {
         this.clearTransactionTypes();
         //First time
-        this.addTransactionTypeAndExpectCreated(transactionType);
+        this.addTransactionTypeAndExpectCreated(transactionType, defaultUser);
 
         //Second time
         TransactionType duplicateTrxType = TransactionType
@@ -68,7 +75,7 @@ public class TransactionTypeTestUtil extends BaseTestUtil {
     public void deleteNonExistingTransactionTypeAndExpectException(TransactionType transactionType) {
         this.clearTransactionTypes();
 
-        this.addTransactionTypeAndExpectCreated(transactionType);
+        this.addTransactionTypeAndExpectCreated(transactionType, defaultUser);
 
         //First time
         this.deleteTransactionAndExpectDeleted(transactionType);
@@ -88,10 +95,10 @@ public class TransactionTypeTestUtil extends BaseTestUtil {
                 .addHeaders(testClass.getAuthorizationHeader(user));
         final HttpResponse httpResponse = httpRequest.send();
         final int responseCode = httpResponse.getStatusCode();
-        if(responseCode == HttpStatus.FORBIDDEN.value()){
+        if (responseCode == HttpStatus.FORBIDDEN.value()) {
             return false;
         }
-        if(responseCode == HttpStatus.OK.value()){
+        if (responseCode == HttpStatus.OK.value()) {
             return true;
         }
         final String feedback = String.format("Unexpected status %s received from Transaction query call", httpResponse);
@@ -128,14 +135,16 @@ public class TransactionTypeTestUtil extends BaseTestUtil {
         return this.getTransactionTypesAndExpectSize(null);
     }
 
-    private void addTransactionTypeAndExpectCreated(TransactionType transactionType) {
-        addTransactionTypeAndExpect(transactionType, 201);
+    private void addTransactionTypeAndExpectCreated(TransactionType transactionType, User user) {
+        addTransactionTypeAndExpect(transactionType, 201, user);
     }
 
-    private void addTransactionTypeAndExpect(TransactionType transactionType, int expectedCode) {
+
+    private void addTransactionTypeAndExpect(TransactionType transactionType, int expectedCode, User user) {
         final String trxTypeJson = toJson(transactionType);
         final HttpRequest httpRequest = testClass.post(TRANSACTION_TYPE_ADDRESS, trxTypeJson)
-                .addHeaders(testClass.getDefaultAdminAuthorization());
+                .addHeaders(testClass.getAuthorizationHeader(user));
+
 
         final HttpResponse httpResponse = httpRequest.send();
 
@@ -156,7 +165,12 @@ public class TransactionTypeTestUtil extends BaseTestUtil {
     }
 
     private void deleteTransactionTypeAndExpect(TransactionType transactionType, int expectedCode) {
-        final HttpRequest deleteRequest = testClass.delete(TRANSACTION_TYPE_ADDRESS + "/" + transactionType.getName());
+        this.deleteTransactionTypeAndExpect(transactionType,expectedCode, defaultUser);
+    }
+
+    private void deleteTransactionTypeAndExpect(TransactionType transactionType, int expectedCode, User user) {
+        final HttpRequest deleteRequest = testClass.delete(TRANSACTION_TYPE_ADDRESS + "/" + transactionType.getName())
+                .addHeaders(testClass.getAuthorizationHeader(user));
 
         final HttpResponse httpResponse = deleteRequest.send();
 

@@ -4,6 +4,8 @@ import data.TestDataProvider;
 import org.hyperskill.hstest.dynamic.DynamicTest;
 import org.hyperskill.hstest.testcase.CheckResult;
 
+import java.util.stream.Stream;
+
 import static antifraud.model.ResultEnum.*;
 
 public class AntifraudTest extends AntifraudBaseTest {
@@ -35,6 +37,7 @@ public class AntifraudTest extends AntifraudBaseTest {
         // Check if defaultUser exist
     CheckResult test1() {
         return runtTestScenario(this::checkIfDefaultAdminAddedByDefault);
+
     }
 
     @DynamicTest
@@ -46,6 +49,7 @@ public class AntifraudTest extends AntifraudBaseTest {
     @DynamicTest
         // Adding incomplete users and expect 209
     CheckResult test3() {
+        transactionTypeTestUtil.addTransactionTypesAndCheckSuccessResult(Stream.of(data.trxType.testTransactionType));
         return runtTestScenario(this::checkAuthentication);
     }
 
@@ -165,17 +169,39 @@ public class AntifraudTest extends AntifraudBaseTest {
                 .forEach(trxRequest -> transactionUtil.queryTrxAndExpectResultEnum(data.user.adminUser0, trxRequest, PROHIBITED, "TODO fill it"));
 
         // Check similarly for the ip
-        checkTransactionWithSuspiciousIp();
+        // Check similarly for the ip
+        final TransactionType type = data.trxType.getRandomValidTransactionType();
+        final Transaction transaction = data.transaction.builder()
+                .ipSuspicious(true)
+                .type(type)
+                .result(ALLOWED)
+                .build();
+        TransactionQueryRequest request = TransactionQueryRequest.builder()
+                .ipCount(1)
+                .countryCount(1)
+                .transaction(transaction)
+                .build();
+        transactionUtil.queryTrxAndExpectResultEnum(data.user.adminUser0, request, PROHIBITED, "allowed");
 
-        // Having trx invalid only for amount
-        //....
+        request.setIpCount(4);
+        transactionUtil.queryTrxAndExpectResultEnum(data.user.adminUser0, request, MANUAL_PROCESSING, "IPs exceeded");
 
-        // TODO Having trx invalid for amount as well as ip
+        request.setIpCount(3);
+        request.setCountryCount(3);
+        transactionUtil.queryTrxAndExpectResultEnum(data.user.adminUser0, request, MANUAL_PROCESSING, "countries exceeded");
 
-        // TODO Having trx invalid for amount as well as country
+        request.setIpCount(5);
+        transactionUtil.queryTrxAndExpectResultEnum(data.user.adminUser0, request, PROHIBITED, "countries exceeded");
 
-        // TODO Having trx invalid for amount as well as country and ip
+        request.setCountryCount(4);
+        transactionUtil.queryTrxAndExpectResultEnum(data.user.adminUser0, request, PROHIBITED, "IPs exceeded", "countries exceeded");
+
+        transaction.setAmount(type.getMaxManuall()+1);
+        transactionUtil.queryTrxAndExpectResultEnum(data.user.adminUser0, request, PROHIBITED,"IPs exceeded", "countries exceeded", "transaction is above allowed value");
     }
+
+
+
 
 
     //TODO merge it

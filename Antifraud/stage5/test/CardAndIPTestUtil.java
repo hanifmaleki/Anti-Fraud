@@ -1,4 +1,5 @@
 import antifraud.model.User;
+import exception.UnexpectedResultException;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
 import org.hyperskill.hstest.testcase.CheckResult;

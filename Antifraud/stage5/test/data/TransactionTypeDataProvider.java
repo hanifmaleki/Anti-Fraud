@@ -13,6 +13,7 @@ public class TransactionTypeDataProvider {
     public static final String TRANSACTION_TYPE_ADDRESS = BASE_ADDRESS + "/transaction-type";
 
     //TransactionTypes
+    public final TransactionType testTransactionType;
     public final TransactionType foodTransactionType;
     public final TransactionType insuranceTransactionType;
     public final TransactionType realWareTransactionType;
@@ -20,68 +21,67 @@ public class TransactionTypeDataProvider {
     public final TransactionType transferTransactionType;
     public final TransactionType invalidTransactionTypeAllowedIsNotLowerThanMax;
     public final TransactionType invalidTransactionTypeWithoutMaxManual;
-    public final TransactionType invalidTransactionTypeWithoutMaxAllowed;
     public final TransactionType invalidTransactionTypeWithoutName;
 
     public TransactionTypeDataProvider() {
+        testTransactionType = TransactionType
+                .builder()
+                .name("test")
+                .maxAllowed(50)
+                .maxManuall(350)
+                .build();
         foodTransactionType = TransactionType
                 .builder()
                 .name("food")
-                .maxManuall(150)
-                .maxAllowed(300)
+                .maxAllowed(150)
+                .maxManuall(300)
                 .build();
 
         insuranceTransactionType = TransactionType
                 .builder()
                 .name("insurance")
-                .maxManuall(400)
-                .maxAllowed(1200)
+                .maxAllowed(400)
+                .maxManuall(1200)
                 .build();
 
         realWareTransactionType = TransactionType
                 .builder()
                 .name("real-ware")
-                .maxManuall(200)
-                .maxAllowed(500)
+                .maxAllowed(200)
+                .maxManuall(500)
                 .build();
 
         onlineWareTransactionType = TransactionType
                 .builder()
                 .name("online-ware")
-                .maxManuall(300)
-                .maxAllowed(800)
+                .maxAllowed(300)
+                .maxManuall(800)
                 .build();
 
         transferTransactionType = TransactionType
                 .builder()
                 .name("transfer")
-                .maxManuall(300)
-                .maxAllowed(900)
+                .maxAllowed(300)
+                .maxManuall(900)
                 .build();
 
         invalidTransactionTypeAllowedIsNotLowerThanMax = TransactionType
                 .builder()
                 .name("invalid_trx_tpe")
-                .maxManuall(300)
                 .maxAllowed(300)
+                .maxManuall(300)
                 .build();
 
         invalidTransactionTypeWithoutMaxManual = TransactionType
                 .builder()
                 .name("invalid_trx_tpe")
-                .maxManuall(300)
-                .build();
-
-        invalidTransactionTypeWithoutMaxAllowed = TransactionType
-                .builder()
-                .name("invalid_trx_tpe")
-                .maxManuall(300)
+                .maxAllowed(300)
                 .build();
 
         invalidTransactionTypeWithoutName = TransactionType
                 .builder()
-                .maxManuall(300)
                 .maxAllowed(300)
+                .maxManuall(300)
                 .build();
 
     }
@@ -105,7 +105,7 @@ public class TransactionTypeDataProvider {
         return Stream.of(
                 invalidTransactionTypeAllowedIsNotLowerThanMax,
                 invalidTransactionTypeWithoutMaxManual,
-                invalidTransactionTypeWithoutMaxAllowed,
+                invalidTransactionTypeWithoutMaxManual,
                 invalidTransactionTypeWithoutName);
 
 

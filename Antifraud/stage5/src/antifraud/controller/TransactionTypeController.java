@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 @RestController
 @RequestMapping("/api/antifraud/transaction-type")
 @Secured({"ROLE_ADMIN"})
@@ -21,7 +23,7 @@ public class TransactionTypeController {
     @PostMapping
     public ResponseEntity addTransactionType(@RequestBody TransactionType transactionType) {
         transactionTypeService.addTransactionType(transactionType);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(CREATED).build();
     }
 
     @GetMapping

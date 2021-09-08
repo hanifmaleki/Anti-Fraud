@@ -93,7 +93,14 @@ public class TransactionDataProvider {
     }
 
     public TransactionQueryRequest getAllowedTrxRequest(){
-        final TransactionType randomValidTransactionType = data.trxType.getRandomValidTransactionType();
+        return getAllowedTransaction(data.trxType.getRandomValidTransactionType());
+    }
+
+    public TransactionQueryRequest getAllowedTestTrxRequest(){
+        return getAllowedTransaction(data.trxType.testTransactionType);
+    }
+
+    public TransactionQueryRequest getAllowedTransaction(TransactionType randomValidTransactionType) {
         final Transaction transaction = builder()
                 .type(randomValidTransactionType)
                 .result(ALLOWED)

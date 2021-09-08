@@ -2,6 +2,7 @@ import antifraud.model.ResultEnum;
 import antifraud.model.Role;
 import antifraud.model.User;
 import data.TestDataProvider;
+import exception.UnexpectedResultException;
 import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
 
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class AuthorizationTestUtil extends BaseTestUtil {
 
@@ -33,6 +35,7 @@ public class AuthorizationTestUtil extends BaseTestUtil {
         privilegeMethodsMap.put(Privilege.CARD_MANAGEMENT, cardUtil::isAuthorizedCardGet);
         privilegeMethodsMap.put(Privilege.IP_MANAGEMENT, cardUtil::isAuthorizedIpGet);
         privilegeMethodsMap.put(Privilege.USER_MANAGEMENT, this::isAuthorizedUserMgt);
+        privilegeMethodsMap.put(Privilege.TRANSACTION_TYPE_MANAGEMENT, this::isAuthorizedTypeManagement);
     }
 
     enum Privilege {
@@ -80,10 +83,9 @@ public class AuthorizationTestUtil extends BaseTestUtil {
         // Add user
         userUtil.addUserAndExceptStatus(testClass.getDefaultAdmin(), user, HttpStatus.CREATED);
         // get trx with correct user
-
-        transactionUtil.queryTrxAndExpectResultEnum(user, data.transaction.getAllowedTrxRequest(), ResultEnum.ALLOWED);
+        transactionUtil.queryTrxAndExpectResultEnum(user, data.transaction.getAllowedTestTrxRequest(), ResultEnum.ALLOWED);
         // get trx with wrong password and except 401
-        transactionUtil.queryTrxAndExpectUnauthorizedHttpStatus(data.user.adminUser1WithWrongPassword, data.transaction.getAllowedTrxRequest());
+        transactionUtil.queryTrxAndExpectUnauthorizedHttpStatus(data.user.adminUser1WithWrongPassword, data.transaction.getAllowedTestTrxRequest());
 
         userUtil.deleteExistingUser(testClass.getDefaultAdmin(), user.getUsername());
 
@@ -126,7 +128,7 @@ public class AuthorizationTestUtil extends BaseTestUtil {
 
 
     private Boolean isAuthorizedTrx(User user) {
-        return transactionUtil.isUserAuthorizedForTrxQuery(user, data.transaction.getAllowedTrxRequest());
+        return transactionUtil.isUserAuthorizedForTrxQuery(user, data.transaction.getAllowedTestTrxRequest());
     }
 
     private Boolean isAuthorizedTypeManagement(User user) {
