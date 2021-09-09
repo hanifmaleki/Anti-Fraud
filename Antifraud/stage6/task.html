@@ -1,12 +1,20 @@
 <html>
 
-<h2>Description</h2>
+<h2>Description & Goals</h2>
+<ol>
+    <li>Sometimes in Machine Learning it is not possible to have enough data for training the system. e.g. in the current project</li>
+    <li>To narrow down the set of transactions which should be confirm/reject manually</li>
+    <li>Hackers change frequently their method. It is necessary to keep our algorithm up to date and flexible</li>
+</ol>
+
 <h2>Keywords</h2>
 <ol>
     <li>Feedback loop in Machine Learning – Labeling data (https://www.linkedin.com/pulse/feedback-loop-machine-learning-labeling-data-sanchit-tiwari)</li>
     <li>Active Learning</li>
     <li>Reinforcement Learning:</li>
+    <li>Feedback Loop Concept</li>
 </ol>
+
 <h2>Main Tasks</h2>
 <ol>
     <li>Improve Transaction with ID and ...</li>
@@ -15,7 +23,21 @@
     <li>Add a feedback endpoint correcting the trx</li>
     <li>Apply a logic to feedback</li>
     <li>Add an endpoint in type that shows for each type(by name) the coefficients</li>
+    <li>Add an endpoint showing number of countries and number of IPs coefficients</li>
 </ol>
+
+<pre><code>
+    For each feedback {
+        if it is different with our label{
+            Find the rules which makes it wrong;
+            Apply Feedback logic on the rule and correct coefficients{
+                new_coefficient = 0.8 * old_coefficient + 0.2 * new_suggesrted_coefficient
+            }
+
+        }
+    }
+</code></pre>
+
 
 <h1>Important Question: which ML method? How many Transactions? ...</h1>
 
