@@ -19,6 +19,10 @@ public class TransactionType {
     @Positive
     private Integer maxManuall; //TODO BigDecimal
 
+    private Double currentMaxAllowed;
+
+    private Double currentMaxManuall;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -14,6 +14,8 @@ import javax.validation.constraints.Positive;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
+    private Long id;
+
     @Positive
     private Integer amount;
     @NotBlank
@@ -22,4 +24,8 @@ public class Transaction {
     private String cardSerial;
     @NotNull
     private String type;
+
+    private ResultEnum result;
+
+    private ResultEnum feedback;
 }
