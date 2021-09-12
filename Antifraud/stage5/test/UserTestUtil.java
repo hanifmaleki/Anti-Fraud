@@ -1,11 +1,12 @@
 import antifraud.model.User;
-import data.TestDataProvider;
 import exception.UnexpectedResultException;
 import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
 import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import util.AntifraudBaseTest;
+import util.MyBaseTestUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,17 +17,19 @@ import static data.UserDataProvider.USER_ADDRESS;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
-public class UserTestUtil extends BaseTestUtil {
+public class UserTestUtil extends MyBaseTestUtil<User> {
 
 
     private final User defaultAdmin;
 
     public UserTestUtil(AntifraudBaseTest testClass) {
-        super(testClass);
+        super(testClass, User.class);
         defaultAdmin = testClass.getDefaultAdmin();
 
     }
 
+
+    //TODO replace with assert
     public void checkUserExistIngList(List<User> users, User user) {
         User receivedUser = users.stream().filter(user::equals).findFirst().orElseThrow(() -> {
             String feedback = String.format("The expected user %s does nt exist in the received list", user);
@@ -50,55 +53,22 @@ public class UserTestUtil extends BaseTestUtil {
 
 
     public void deleteExistingUser(User removerUser, String username) {
-        final Map<String, String> authorizationParameter = testClass.getAuthorizationHeader(removerUser);
-        HttpRequest delete = testClass.delete(USER_ADDRESS + "/" + username)
-                .addHeaders(authorizationParameter);
-        HttpResponse response = delete.send();
-        if (response.getStatusCode() != OK.value()) {
-            String feedback = String.format("Could not delete existing user %s", username);
-            throw new UnexpectedResultException(CheckResult.wrong(feedback));
-        }
+        this.remove(username, removerUser);
     }
+
 
     public void deleteNonExistingUser(User removerUser, String username) {
-        final Map<String, String> authorizationParameter = testClass.getAuthorizationHeader(removerUser);
-        HttpRequest delete = testClass.delete(USER_ADDRESS + "/" + username);
-        delete.addHeaders(authorizationParameter);
-        HttpResponse response = delete.send();
-        int statusCode = response.getStatusCode();
-        int expectedValue = NOT_FOUND.value();
-        if (statusCode != expectedValue) {
-            String feedback = String.format("Not existing user %s deletion should return code %d and not %d"
-                    , username, expectedValue, statusCode);
-            throw new UnexpectedResultException(CheckResult.wrong(feedback));
-        }
+        final int notFound = NOT_FOUND.value();
+        String feedback = String.format("Not existing user %s deletion should return code %d "
+                , username, notFound);
+        this.sendDeleteAndExpect(username, removerUser, notFound, feedback);
     }
 
-    /**
-     * Add user and except status
-     *
-     * @param adderUser  The user who want to add a new user
-     * @param addingUser The new user to be added
-     * @param httpStatus expected HTTP status
-     * @throws UnexpectedResultException when the received status is different from expected
-     */
+
     public void addUserAndExceptStatus(User adderUser, User addingUser, HttpStatus httpStatus) {
-        // Add User
-        String user1Json = toJson(addingUser);
-        HttpRequest httpRequest = testClass.post(USER_ADDRESS, user1Json)
-                .addHeaders(testClass.getAuthorizationHeader(adderUser));
-        final HttpResponse response = httpRequest.send();
-        // Except httpStatus
-        int status = httpStatus.value();
-        if (response.getStatusCode() != status) {
-            String feedback = String.format("POST %s should respond with status code %d, responded: %d\n\n" +
-                            "Response body:\n%s"
-                    , USER_ADDRESS, status, response.getStatusCode(), response.getContent());
-            CheckResult result = CheckResult.wrong(feedback);
-
-            throw new UnexpectedResultException(result);
-        }
+        this.sendPostRequestAndExpect(adderUser, addingUser, httpStatus.value(), null);
     }
+
 
     public boolean isAuthorizedPasswordChange(User changerUser, User changingUser) {
 
@@ -132,24 +102,11 @@ public class UserTestUtil extends BaseTestUtil {
      * @return Number of users EXCLUDING the default user
      */
     public List<User> getUsersAndExpectSize(Integer expectedSize) {
-        HttpRequest httpRequest = testClass.get(USER_ADDRESS)
-                .addHeaders(testClass.getDefaultAdminAuthorization());
-        HttpResponse response = httpRequest.send();
-
-        if (response.getStatusCode() != OK.value()) {
-            String feedback = String.format("GET %s should respond with status code 200, responded: %d\n\n" +
-                            "Response body:\n%s"
-                    , USER_ADDRESS, response.getStatusCode(), response.getContent());
-            CheckResult result = CheckResult.wrong(feedback);
-            throw new UnexpectedResultException(result);
-        }
-
-        List<User> users = Arrays.stream(fromJson(response, User[].class))
-                .filter(item -> !item.equals(testClass.getDefaultAdmin()))
-                .collect(Collectors.toList());
+        final List<User> users = this.get(testClass.getDefaultAdmin());
 
         users.remove(testClass.getDefaultAdmin());
 
+        //TODO Add HMatcher
         int size = users.size();
         if (size != expectedSize) {
             String feedback = String.format("Number of users should be 1. The received list size is %d", size);
@@ -160,6 +117,7 @@ public class UserTestUtil extends BaseTestUtil {
 
         return users;
     }
+
 
     public void checkHashingPassword(User user) {
         testClass.log("Adding user {} and expect hashed password", user);
@@ -181,4 +139,13 @@ public class UserTestUtil extends BaseTestUtil {
         testClass.log("Received password is equal to the expected one");
     }
 
+    @Override
+    public String getBaseAddress() {
+        return USER_ADDRESS;
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "User";
+    }
 }

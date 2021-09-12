@@ -4,6 +4,8 @@ import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 import org.hyperskill.hstest.mocks.web.response.HttpResponse;
 import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
+import util.AntifraudBaseTest;
+import util.BaseTestUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -3,6 +3,7 @@ import antifraud.model.*;
 import data.TestDataProvider;
 import org.hyperskill.hstest.dynamic.DynamicTest;
 import org.hyperskill.hstest.testcase.CheckResult;
+import util.AntifraudBaseTest;
 
 import java.util.stream.Stream;
 

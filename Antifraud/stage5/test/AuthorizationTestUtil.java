@@ -5,13 +5,14 @@ import data.TestDataProvider;
 import exception.UnexpectedResultException;
 import org.hyperskill.hstest.testcase.CheckResult;
 import org.springframework.http.HttpStatus;
+import util.AntifraudBaseTest;
+import util.BaseTestUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 public class AuthorizationTestUtil extends BaseTestUtil {
 

@@ -6,8 +6,6 @@ files:
   visible: true
 - name: resources/user-schema.yaml
   visible: true
-- name: test/Tests.java
-  visible: false
 - name: src/antifraud/model/TransactionType.java
   visible: true
 - name: src/antifraud/controller/TransactionTypeController.java
@@ -24,15 +22,43 @@ files:
   visible: false
 - name: test/data/IpAndCardDataProvider.java
   visible: false
-- name: test/HttpRequestType.java
-  visible: false
 - name: src/antifraud/service/TransactionTypeService.java
   visible: true
 - name: src/antifraud/exception/InvalidDataException.java
   visible: true
-- name: src/antifraud/SecurityConfiguration.java
+- name: src/antifraud/service/rules/TransactionRule.java
   visible: true
-- name: src/antifraud/service/rules/IpCountRule.java
+- name: src/antifraud/service/rules/RuleEngine.java
+  visible: true
+- name: src/antifraud/service/rules/IpCheckRule.java
+  visible: true
+- name: src/antifraud/service/rules/CardCheckRule.java
+  visible: true
+- name: src/antifraud/service/rules/TransactionAmountRule.java
   visible: true
 - name: resources/openapi.yaml
   visible: true
+- name: test/Tests.java
+  visible: false
+- name: test/AntifraudTest.java
+  visible: false
+- name: src/antifraud/service/rules/CountryCountRule.java
+  visible: true
+- name: src/antifraud/service/rules/IpCountRule.java
+  visible: true
+- name: resources/application.properties
+  visible: true
+- name: test/hassured/HMatcher.java
+  visible: false
+- name: test/hassured/http/HasResponseCode.java
+  visible: false
+- name: test/hassured/collection/HasSize.java
+  visible: false
+- name: test/hassured/HMatchers.java
+  visible: false
+- name: test/hassured/collection/ContainsAllInAnyOrder.java
+  visible: false
+- name: test/util/HttpRequestType.java
+  visible: false
+- name: test/hassured/HAssured.java
+  visible: false
