@@ -2,13 +2,21 @@ type: edu
 files:
 - name: src/antifraud/AntifraudApplication.java
   visible: true
-- name: src/antifraud/model/User.java
-  visible: false
 - name: build.gradle
   visible: true
 - name: resources/user-schema.yaml
   visible: true
+- name: src/antifraud/model/Transaction.java
+  visible: true
 - name: src/antifraud/model/Role.java
+  visible: true
+- name: src/antifraud/model/User.java
+  visible: true
+- name: src/antifraud/service/SuspiciousIpService.java
+  visible: true
+- name: src/antifraud/model/TransactionType.java
+  visible: true
+- name: test/util/TransactionHistoryUtils.java
   visible: false
-- name: test/Tests.java
+- name: test/util/TransactionFeedbackUtil.java
   visible: false

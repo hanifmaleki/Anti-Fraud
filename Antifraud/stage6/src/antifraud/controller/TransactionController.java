@@ -23,9 +23,15 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTransactionValidity(transaction));
     }
 
-    @GetMapping
+    @GetMapping("/history/{cardNumber}")
     @Secured("ROLE_ADMIN")
     ResponseEntity<List<Transaction>> getTransactionHistory(@PathVariable String cardNumber) {
+        return null;
+    }
+
+    @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_SUPPORT"})
+    ResponseEntity<Transaction> getTransactionById(@PathVariable Long trxId) {
         return null;
     }
 

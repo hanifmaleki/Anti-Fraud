@@ -33,3 +33,4 @@ hs_err_pid*
 /Antifraud/stage2/build/
 */build/
 /Antifraud/stage3/build/
+/Antifraud/stage5/test/hassured/

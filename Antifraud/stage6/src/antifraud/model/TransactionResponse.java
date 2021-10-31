@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TransactionResponse {
+    private long id;
     private ResultEnum result;
     private String message;
 }

@@ -1,4 +1,4 @@
-package antifraud.service;
+package antifraud.model;
 
 import lombok.*;
 
@@ -11,17 +11,17 @@ import javax.validation.constraints.Positive;
 @AllArgsConstructor
 @Builder
 //TODO Add validation
-public class TransactionType {
+public class  TransactionType {
     @NotBlank
     private String name;
     @Positive
     private Integer maxAllowed; //TODO BigDecimal
     @Positive
-    private Integer maxManuall; //TODO BigDecimal
+    private Integer maxManual; //TODO BigDecimal
 
     private Double currentMaxAllowed;
 
-    private Double currentMaxManuall;
+    private Double currentMaxManual;
 
     @Override
     public boolean equals(Object o) {
