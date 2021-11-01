@@ -28,48 +28,48 @@ public class TransactionTypeDataProvider {
                 .builder()
                 .name("test")
                 .maxAllowed(50)
-                .maxManuall(350)
+                .maxManual(350)
                 .build();
         foodTransactionType = TransactionType
                 .builder()
                 .name("food")
                 .maxAllowed(150)
-                .maxManuall(300)
+                .maxManual(300)
                 .build();
 
         insuranceTransactionType = TransactionType
                 .builder()
                 .name("insurance")
                 .maxAllowed(400)
-                .maxManuall(1200)
+                .maxManual(1200)
                 .build();
 
         realWareTransactionType = TransactionType
                 .builder()
                 .name("real-ware")
                 .maxAllowed(200)
-                .maxManuall(500)
+                .maxManual(500)
                 .build();
 
         onlineWareTransactionType = TransactionType
                 .builder()
                 .name("online-ware")
                 .maxAllowed(300)
-                .maxManuall(800)
+                .maxManual(800)
                 .build();
 
         transferTransactionType = TransactionType
                 .builder()
                 .name("transfer")
                 .maxAllowed(300)
-                .maxManuall(900)
+                .maxManual(900)
                 .build();
 
         invalidTransactionTypeAllowedIsNotLowerThanMax = TransactionType
                 .builder()
                 .name("invalid_trx_tpe")
                 .maxAllowed(300)
-                .maxManuall(300)
+                .maxManual(300)
                 .build();
 
         invalidTransactionTypeWithoutMaxManual = TransactionType
@@ -81,7 +81,7 @@ public class TransactionTypeDataProvider {
         invalidTransactionTypeWithoutName = TransactionType
                 .builder()
                 .maxAllowed(300)
-                .maxManuall(300)
+                .maxManual(300)
                 .build();
 
     }

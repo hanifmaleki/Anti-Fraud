@@ -2,14 +2,18 @@
 
 <h2>Description & Goals</h2>
 <ol>
-    <li>Sometimes in Machine Learning it is not possible to have enough data for training the system. e.g. in the current project</li>
+    <li>Sometimes in Machine Learning it is not possible to have enough data for training the system. e.g. in the
+        current project
+    </li>
     <li>To narrow down the set of transactions which should be confirm/reject manually</li>
     <li>Hackers change frequently their method. It is necessary to keep our algorithm up to date and flexible</li>
 </ol>
 
 <h2>Keywords</h2>
 <ol>
-    <li>Feedback loop in Machine Learning – Labeling data (https://www.linkedin.com/pulse/feedback-loop-machine-learning-labeling-data-sanchit-tiwari)</li>
+    <li>Feedback loop in Machine Learning – Labeling data
+        (https://www.linkedin.com/pulse/feedback-loop-machine-learning-labeling-data-sanchit-tiwari)
+    </li>
     <li>Active Learning</li>
     <li>Reinforcement Learning:</li>
     <li>Feedback Loop Concept</li>
@@ -17,33 +21,75 @@
 
 <h2>Main Tasks</h2>
 <ol>
-    <li>Improve Transaction with ID and ...</li>
-    <li>No transaction Query anymore</li>
-    <li>Add transaction history endpoint</li>
-    <li>Add a feedback endpoint correcting the trx</li>
-    <li>Apply a logic to feedback</li>
+    <li>Improve Transaction with
+        <ol>
+            <li>ID of type long</li>
+            <li>Country code e.g. US for the united states and GE for germany</li>
+            <li>Feedback ...</li>
+        </ol>
+    </li>
+    <li> Improve TransactionType with
+        <ol>
+            <li>currentMaxAllowed which is initialized to maxAllowed</li>
+            <li>currentMaxManual which is initialized to maxAllowed</li>
+        </ol>
+    </li>
+    <li>No transaction query resource anymore. The transaction query is done like stage 4 with a body of type
+        transaction
+        <pre><code>
+            POST antifraud\transaction\
+        </code></pre>
+    </li>
+    <li>
+        Add transaction history endpoint; giving the serial number of the card and return all transactions of the given
+        card
+        <pre><code>
+        antifraud\transaction\history\{cardNumber}
+        </code></pre>
+    </li>
+    <li>Add a feedback endpoint correcting the transaction and return corrected transaction
+        <pre><code>
+        antifraud\transaction\{id}}?feedback=newFeedback
+        </code></pre>
+        <ol>
+            <li>If feedback is equal to the actual transaction result ...</li>
+            <li>For each transaction only one feedback is allowed</li>
+            <li>Feedback is done only by user admin and support</li>
+        </ol>
+    </li>
+    <li>Apply a logic to feedback. For simplicity we assume that the feedback is only applied to the amount rule.
+        Then update TransactionType ..... like that ....
+    </li>
     <li>Add an endpoint in type that shows for each type(by name) the coefficients</li>
     <li>Add an endpoint showing number of countries and number of IPs coefficients</li>
-</ol>
 
-<pre><code>
-    For each feedback {
-        if it is different with our label{
-            Find the rules which makes it wrong;
-            Apply Feedback logic on the rule and correct coefficients{
-                new_coefficient = 0.8 * old_coefficient + 0.2 * new_suggesrted_coefficient
+    <li>TODO apply feedback to the other rules ...
+        <pre><code>
+        For each feedback {
+            if it is different with our label{
+                Find the rules which makes it wrong;
+                Apply Feedback logic on the rule and correct coefficients{
+                    new_coefficient = 0.8 * old_coefficient + 0.2 * new_suggesrted_coefficient
+                }
+
             }
-
         }
-    }
-</code></pre>
+        </code></pre>
+    </li>
+</ol>
 
 
 <h1>Important Question: which ML method? How many Transactions? ...</h1>
 
-<p>Artificial Intelligence refers to the set of algorithms that enable machines to mimic human thinking in order to solve the problems that need human intelligence. In the last two decades, the modern artificial intelligence algorithms have managed to think even better than the human in many fields. For instance Natural Language Processing(NLP), pattern recognition,  autonomous drive, playing chess games like chess and go, and medical diagnosis. </p>
+<p>Artificial Intelligence refers to the set of algorithms that enable machines to mimic human thinking in order to
+    solve the problems that need human intelligence. In the last two decades, the modern artificial intelligence
+    algorithms have managed to think even better than the human in many fields. For instance Natural Language
+    Processing(NLP), pattern recognition,  autonomous drive, playing chess games like chess and go, and medical
+    diagnosis. </p>
 
-<p>The vast majority of these improvements have been achieved in the branch of Machine Learning. Machine Learning is an area in artificial intelligence that is based on learning from experience by taking advantage of finding patterns in data.</p>
+<p>The vast majority of these improvements have been achieved in the branch of Machine Learning. Machine Learning is an
+    area in artificial intelligence that is based on learning from experience by taking advantage of finding patterns in
+    data.</p>
 
 <h3>My keywords</h3>
 <ol>
@@ -76,12 +122,15 @@
         [Graph name / Topic 2 name]<br>
         [Graph name / Topic 3 name]<br>
         Example:<br>
-        <a href="https://hyperskill.org/learn/step/5913" rel="noopener noreferrer nofollow">Python / Taking input</a><br>
+        <a href="https://hyperskill.org/learn/step/5913" rel="noopener noreferrer nofollow">Python / Taking
+            input</a><br>
         <a href="https://hyperskill.org/learn/step/5940" rel="noopener noreferrer nofollow">Python / While loop</a><br>
         <a href="https://hyperskill.org/learn/step/6854" rel="noopener noreferrer nofollow">Essentials / JSON</a><br>
         Python / Multiple Inheritance (No link if there is no such topic in the Graph, but used in the stage)<br>
-        <strong>Don't write all the dependencies till <code>Introduction to XXX</code>, the preceding topics will be added automatically</strong><br>
-        ...</li>
+        <strong>Don't write all the dependencies till <code>Introduction to XXX</code>, the preceding topics will be
+            added automatically</strong><br>
+        ...
+    </li>
     <li> </li>
 </ol>
 
@@ -105,7 +154,8 @@
 
 <p>https://www.kaggle.com/mlg-ulb/creditcardfraud</p>
 
-<p>https://spd.group/machine-learning/fraud-detection-with-machine-learning/#:~:text=Fraud%20Detection%20with%20Machine%20Learning%20becomes%20possible%20due%20to%20the,the%20speed%20of%20information%20processing.</p>
+<p>
+    https://spd.group/machine-learning/fraud-detection-with-machine-learning/#:~:text=Fraud%20Detection%20with%20Machine%20Learning%20becomes%20possible%20due%20to%20the,the%20speed%20of%20information%20processing.</p>
 
 <p>https://deeplearning4j.konduit.ai/</p>
 
@@ -113,9 +163,11 @@
 
 <p>https://www.ravelin.com/insights/machine-learning-for-fraud-detection?utm_term=anti%20fraud%20machine%20learning&amp;utm_campaign=Awareness+-+Machine+learning&amp;utm_source=adwords&amp;utm_medium=ppc&amp;hsa_ver=3&amp;hsa_grp=58391109750&amp;hsa_kw=anti%20fraud%20machine%20learning&amp;hsa_tgt=kwd-649583503394&amp;hsa_mt=b&amp;hsa_acc=6420205522&amp;hsa_net=adwords&amp;hsa_ad=354150251250&amp;hsa_src=g&amp;hsa_cam=1356898923&amp;gclid=CjwKCAjwr_uCBhAFEiwAX8YJgbj3-PhYtarJETthyHhX5u3JsYYUzEYeQI5q5002Ihop6QPck2fm2xoCMbAQAvD_BwE</p>
 
-<p>https://medium.com/@Nethone_/a-beginners-guide-to-machine-learning-in-payment-fraud-detection-prevention-360c95a9ca54</p>
+<p>
+    https://medium.com/@Nethone_/a-beginners-guide-to-machine-learning-in-payment-fraud-detection-prevention-360c95a9ca54</p>
 
-<p>https://www.altexsoft.com/whitepapers/fraud-detection-how-machine-learning-systems-help-reveal-scams-in-fintech-healthcare-and-ecommerce/</p>
+<p>
+    https://www.altexsoft.com/whitepapers/fraud-detection-how-machine-learning-systems-help-reveal-scams-in-fintech-healthcare-and-ecommerce/</p>
 
 <p> </p>
 

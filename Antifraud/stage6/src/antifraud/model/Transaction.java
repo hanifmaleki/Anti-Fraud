@@ -25,6 +25,9 @@ public class Transaction {
     @NotNull
     private String type;
 
+    @NotNull
+    private String countryCode;
+
     private ResultEnum result;
 
     private ResultEnum feedback;

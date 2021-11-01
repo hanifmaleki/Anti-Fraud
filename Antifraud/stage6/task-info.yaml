@@ -20,3 +20,7 @@ files:
   visible: false
 - name: test/util/TransactionFeedbackUtil.java
   visible: false
+- name: src/antifraud/dao/TransactionDao.java
+  visible: true
+- name: src/antifraud/model/TransactionQuery.java
+  visible: true

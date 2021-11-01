@@ -2,6 +2,7 @@ package util;
 
 import antifraud.model.Transaction;
 import antifraud.model.User;
+import org.hyperskill.hstest.mocks.web.request.HttpRequest;
 
 
 import java.util.List;
@@ -33,5 +34,6 @@ public class TransactionHistoryUtils extends BaseRestTestUtil<Transaction>{
                 .httpRequest();
         //TODO correct it
         httpRequest.send();
+        return null;
     }
 }
