@@ -1,0 +1,687 @@
+openapi: 3.0.3
+info:
+  title: Api Documentation
+  description: Api Documentation
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  version: '1.0'
+servers:
+  - url: http://localhost:8080
+    description: Inferred Url
+tags:
+  - name: stolen-card-controller
+    description: Stolen Card Controller
+  - name: suspicious-ip-controller
+    description: Suspicious Ip Controller
+  - name: transaction-controller
+    description: Transaction Controller
+  - name: transaction-type-controller
+    description: Transaction Type Controller
+  - name: user-controller
+    description: User Controller
+paths:
+  /api/antifraud/stolencard:
+    get:
+      tags:
+        - stolen-card-controller
+      summary: getAll
+      operationId: getAllUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - stolen-card-controller
+      summary: add
+      operationId: addUsingPOST
+      parameters:
+        - name: serialNumber
+          in: query
+          description: serialNumber
+          required: true
+          style: form
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/stolencard/{serialNumber}:
+    delete:
+      tags:
+        - stolen-card-controller
+      summary: delete
+      operationId: deleteUsingDELETE
+      parameters:
+        - name: serialNumber
+          in: path
+          description: serialNumber
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /api/antifraud/suspicious-ip:
+    get:
+      tags:
+        - suspicious-ip-controller
+      summary: getAll
+      operationId: getAllUsingGET_1
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - suspicious-ip-controller
+      summary: add
+      operationId: addUsingPOST_1
+      parameters:
+        - name: ip
+          in: query
+          description: ip
+          required: true
+          style: form
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/suspicious-ip/{ip}:
+    delete:
+      tags:
+        - suspicious-ip-controller
+      summary: delete
+      operationId: deleteUsingDELETE_1
+      parameters:
+        - name: ip
+          in: path
+          description: ip
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /api/antifraud/transaction/{trxId}:
+    get:
+      tags:
+        - transaction-controller
+      summary: getTransactionById
+      operationId: getTransactionByIdUsingGET
+      parameters:
+        - name: trxId
+          in: path
+          description: trxId
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - transaction-controller
+      summary: correctTransaction
+      operationId: correctTransactionUsingPUT
+      parameters:
+        - name: trxId
+          in: path
+          description: id
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int64
+        - name: feedback
+          in: query
+          description: feedback
+          required: true
+          style: form
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/transaction:
+    post:
+      tags:
+        - transaction-controller
+      summary: isTransactionValid
+      operationId: isTransactionValidUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/transaction/history/{cardNumber}:
+    get:
+      tags:
+        - transaction-controller
+      summary: getTransactionHistory
+      operationId: getTransactionHistoryUsingGET
+      parameters:
+        - name: cardNumber
+          in: path
+          description: cardNumber
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/transaction-type:
+    get:
+      tags:
+        - transaction-type-controller
+      summary: get
+      operationId: getUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionType'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - transaction-type-controller
+      summary: addTransactionType
+      operationId: addTransactionTypeUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionType'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseEntity'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/transaction-type/country-count:
+    get:
+      tags:
+        - transaction-type-controller
+      summary: getCountryCount
+      operationId: getCountryCountUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: number
+                format: double
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/transaction-type/ip-count:
+    get:
+      tags:
+        - transaction-type-controller
+      summary: getIpCount
+      operationId: getIpCountUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: number
+                format: double
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/transaction-type/{typeName}:
+    delete:
+      tags:
+        - transaction-type-controller
+      summary: remove
+      operationId: removeUsingDELETE
+      parameters:
+        - name: typeName
+          in: path
+          description: typeName
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /api/antifraud/user:
+    get:
+      tags:
+        - user-controller
+      summary: getAll
+      operationId: getAllUsingGET_2
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - user-controller
+      summary: addUser
+      operationId: addUserUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/antifraud/user/{username}:
+    put:
+      tags:
+        - user-controller
+      summary: changePassword
+      operationId: changePasswordUsingPUT
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          style: simple
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - user-controller
+      summary: deleteUser
+      operationId: deleteUserUsingDELETE
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          style: simple
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+components:
+  schemas:
+    ResponseEntity:
+      title: ResponseEntity
+      type: object
+      properties:
+        body:
+          type: object
+        statusCode:
+          type: string
+          enum:
+            - ACCEPTED
+            - ALREADY_REPORTED
+            - BAD_GATEWAY
+            - BAD_REQUEST
+            - BANDWIDTH_LIMIT_EXCEEDED
+            - CHECKPOINT
+            - CONFLICT
+            - CONTINUE
+            - CREATED
+            - DESTINATION_LOCKED
+            - EXPECTATION_FAILED
+            - FAILED_DEPENDENCY
+            - FORBIDDEN
+            - FOUND
+            - GATEWAY_TIMEOUT
+            - GONE
+            - HTTP_VERSION_NOT_SUPPORTED
+            - IM_USED
+            - INSUFFICIENT_SPACE_ON_RESOURCE
+            - INSUFFICIENT_STORAGE
+            - INTERNAL_SERVER_ERROR
+            - I_AM_A_TEAPOT
+            - LENGTH_REQUIRED
+            - LOCKED
+            - LOOP_DETECTED
+            - METHOD_FAILURE
+            - METHOD_NOT_ALLOWED
+            - MOVED_PERMANENTLY
+            - MOVED_TEMPORARILY
+            - MULTIPLE_CHOICES
+            - MULTI_STATUS
+            - NETWORK_AUTHENTICATION_REQUIRED
+            - NON_AUTHORITATIVE_INFORMATION
+            - NOT_ACCEPTABLE
+            - NOT_EXTENDED
+            - NOT_FOUND
+            - NOT_IMPLEMENTED
+            - NOT_MODIFIED
+            - NO_CONTENT
+            - OK
+            - PARTIAL_CONTENT
+            - PAYLOAD_TOO_LARGE
+            - PAYMENT_REQUIRED
+            - PERMANENT_REDIRECT
+            - PRECONDITION_FAILED
+            - PRECONDITION_REQUIRED
+            - PROCESSING
+            - PROXY_AUTHENTICATION_REQUIRED
+            - REQUESTED_RANGE_NOT_SATISFIABLE
+            - REQUEST_ENTITY_TOO_LARGE
+            - REQUEST_HEADER_FIELDS_TOO_LARGE
+            - REQUEST_TIMEOUT
+            - REQUEST_URI_TOO_LONG
+            - RESET_CONTENT
+            - SEE_OTHER
+            - SERVICE_UNAVAILABLE
+            - SWITCHING_PROTOCOLS
+            - TEMPORARY_REDIRECT
+            - TOO_EARLY
+            - TOO_MANY_REQUESTS
+            - UNAUTHORIZED
+            - UNAVAILABLE_FOR_LEGAL_REASONS
+            - UNPROCESSABLE_ENTITY
+            - UNSUPPORTED_MEDIA_TYPE
+            - UPGRADE_REQUIRED
+            - URI_TOO_LONG
+            - USE_PROXY
+            - VARIANT_ALSO_NEGOTIATES
+        statusCodeValue:
+          type: integer
+          format: int32
+    Transaction:
+      title: Transaction
+      required:
+        - cardSerial
+        - countryCode
+        - ipAddress
+        - type
+      type: object
+      properties:
+        amount:
+          type: integer
+          format: int32
+        cardSerial:
+          type: string
+        countryCode:
+          type: string
+        feedback:
+          type: string
+          enum:
+            - ALLOWED
+            - MANUAL_PROCESSING
+            - PROHIBITED
+        id:
+          type: integer
+          format: int64
+        ipAddress:
+          type: string
+        result:
+          type: string
+          enum:
+            - ALLOWED
+            - MANUAL_PROCESSING
+            - PROHIBITED
+        type:
+          type: string
+    TransactionResponse:
+      title: TransactionResponse
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        message:
+          type: string
+        notApplyingRules:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionRule'
+        result:
+          type: string
+          enum:
+            - ALLOWED
+            - MANUAL_PROCESSING
+            - PROHIBITED
+    TransactionRule:
+      title: TransactionRule
+      type: object
+    TransactionType:
+      title: TransactionType
+      required:
+        - name
+      type: object
+      properties:
+        currentMaxAllowed:
+          type: number
+          format: double
+        currentMaxManual:
+          type: number
+          format: double
+        maxAllowed:
+          type: integer
+          format: int32
+        maxManual:
+          type: integer
+          format: int32
+        name:
+          type: string
+    User:
+      title: User
+      required:
+        - name
+        - password
+        - role
+        - username
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - SUPPORT
+            - USER
+        username:
+          type: string

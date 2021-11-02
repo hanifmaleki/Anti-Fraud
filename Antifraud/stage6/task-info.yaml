@@ -24,3 +24,5 @@ files:
   visible: true
 - name: src/antifraud/model/TransactionQuery.java
   visible: true
+- name: resources/openapi.yaml
+  visible: true
